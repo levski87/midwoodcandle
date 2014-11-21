@@ -1,0 +1,22 @@
+.DS_Store
+.buildpath
+.project
+.settings/
+.idea/
+*.iml
+!.gitkeep
+wp-content/uploads/*
+wp-content/plugins/db-cache-reloaded-fix/cache/*
+
+# WP config was added to repo to simplify deployment to AWS EB
+wp-config.php
+wp-config.php.*
+
+.env.*
+!.env.sample.php
+
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
