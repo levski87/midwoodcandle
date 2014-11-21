@@ -1,5 +1,6 @@
 <?php
 define('WP_CACHE', false);
+define( 'FS_METHOD', 'direct' );
 /*
 |--------------------------------------------------------------------------
 | Detect The Application Environment
