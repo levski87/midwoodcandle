@@ -61,8 +61,8 @@ $woocommerce_loop['loop']++;
 					
 						} else {
 						?>
-                        
-                        <div class="back-image"><?php echo get_the_post_thumbnail( $post->ID, 'shop_catalog') ?></div>
+                        	
+                        <div class="back-image" style="visibility: hidden;"><?php echo get_the_post_thumbnail( $post->ID, 'shop_catalog') ?></div>
                         
                         <?php
 							
