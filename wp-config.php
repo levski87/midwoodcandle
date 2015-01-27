@@ -73,6 +73,13 @@ define('DB_COLLATE', '');
 define( 'AWS_ACCESS_KEY_ID', $_ENV['AWS_ACCESS_KEY_ID'] );
 define( 'AWS_SECRET_ACCESS_KEY', $_ENV['AWS_SECRET_KEY']);
 
+/** Force SSL Information */
+
+define('FORCE_SSL_ADMIN', true);
+define('FORCE_SSL_LOGIN', true);
+if ($_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')
+$_SERVER['HTTPS']='on'
+
 
 /**#@+
  * Authentication Unique Keys and Salts.
