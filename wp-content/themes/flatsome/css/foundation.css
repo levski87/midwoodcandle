@@ -2525,7 +2525,7 @@ ul.products {
 
 .product-image .front-image img {
   max-width: 101% !important;
-  width: auto !important;
+  width: none !important;
   height: auto !important;
   display: block; }
 
@@ -2536,7 +2536,7 @@ ul.products {
   transition: all 200ms ease-out;
   position: absolute;
   top: 0;
-  width: auto !important;
+  width: none !important;
   height: auto !important;
   display: block;
   backface-visibility: hidden;
