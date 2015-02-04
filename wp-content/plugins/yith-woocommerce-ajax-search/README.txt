@@ -1,14 +1,15 @@
 === YITH WooCommerce Ajax Search ===
 
 Contributors: yithemes
-Tags: ajax, search, woocommerce, products, themes, yit, e-commerce, shop
+Tags: ajax, search, woocommerce, products, themes, yit, e-commerce, shop, yith, ajax search, instant search, premium, yithemes
 Requires at least: 3.5.1
-Tested up to: 3.5.1
-Stable tag: 1.0.0
+Tested up to: 4.1
+Stable tag: 1.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 YITH WooCommerce Ajax Search allows your users to search products in real time.
+WooCommerce 2.2.x Compatible.
 
 == Description ==
 
@@ -24,10 +25,10 @@ It works just like Google Suggest, but on your website, using your database.
 
 Working demo is available here:
 
-**[LIVE DEMO](http://demo.yithemes.com/sistina/)**
+**[LIVE DEMO](http://preview.yithemes.com/sistina/)**
 
 
-Full documentation is available [here](http://yithemes.com/docs-plugins/yith_ajax_search/).
+Full documentation is available [here](http://yithemes.com/docs-plugins/yith_woocommerce_ajax_search/).
 
 
 = Installation =
@@ -35,16 +36,14 @@ Full documentation is available [here](http://yithemes.com/docs-plugins/yith_aja
 Once you have installed the plugin, you just need to activate the plugin in order to enable it.
 
 = Configuration =
-
-YITH WooCommerce Ajax Search will add a new tab called "Ajax Search" below the Woocommerce -> Settings menu. Here you are able to configure all the plugin settings.
+YITH WooCommerce Ajax Search will add a new submenu called "Cart Messages" under "YIT Plugins" menu. Here you are able to configure all the plugin settings.
 
 = Developer =
 
-Are you a developer? Want to customize the templates or the style of the plugin? Read on the [documentation](http://yithemes.com/docs-plugins/yith_ajax_search/) and discover how to do that.
+Are you a developer? Want to customize the templates or the style of the plugin? Read on the [documentation](http://yithemes.com/docs-plugins/yith_woocommerce_ajax_search/) and discover how to do that.
 
 = Support =
 
-Hi there, we have good news here: all our plugins are released for free. Wow!
 Already knew it, right?! Great, but maybe you do not know that: if you're looking for how to install the plugins or how to use them within your Wordpress installations, which is the right way to ask support?
 That's the way:
 
@@ -72,6 +71,28 @@ In WooCommerce->Settings->Ajax Search page, you can choose the minumum size of t
 
 == Changelog ==
 
+= 1.2 =
+
+* Updated: Plugin Core Framework
+
+= 1.1.3 =
+
+* Fixed: Javascript code in external file
+
+= 1.1.2 =
+
+* Fixed: Prevent undefined title index if the widget is called by the the_widget func
+* Updated: Autocomplete js library
+* Updated: Plugin Core Framework
+
+= 1.1.1 =
+
+* Fixed: Settings link doesn't work on WooCommerce 2.1.1
+
+= 1.1.0 =
+
+* Added: Support to WooCommerce 2.1.x
+
 = 1.0.0 =
 
 * Initial release
@@ -91,7 +112,7 @@ If you have created your own language pack, or have an update for an existing on
 
 == Documentation ==
 
-Full documentation is available [here](http://yithemes.com/docs-plugins/yith_ajax_search/).
+Full documentation is available [here](http://yithemes.com/docs-plugins/yith_woocommerce_ajax_search/).
 
 == Upgrade notice ==
 

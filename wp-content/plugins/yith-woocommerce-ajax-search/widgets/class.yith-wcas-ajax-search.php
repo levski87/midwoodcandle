@@ -2,9 +2,9 @@
 /**
  * Ajax Search Widget
  *
- * @author Your Inspiration Themes
+ * @author Yithemes
  * @package YITH WooCommerce Ajax Search
- * @version 1.0.0
+ * @version 1.1.1
  */
 
 if ( !defined( 'YITH_WCAS' ) ) { exit; } // Exit if accessed directly
@@ -50,7 +50,7 @@ if( !class_exists( 'YITH_WCAS_Ajax_Search_Widget' ) ) {
         function widget( $args, $instance ) {
             extract($args);
 
-            $title = $instance['title'];
+            $title = isset( $instance['title'] ) ? $instance['title'] : '';
             $title = apply_filters('widget_title', $title, $instance, $this->id_base);
 
             echo $before_widget;

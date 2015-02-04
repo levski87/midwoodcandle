@@ -2,9 +2,9 @@
 /**
  * Uninstall plugin
  *
- * @author Your Inspiration Themes
+ * @author Yithemes
  * @package YITH WooCommerce Ajax Search
- * @version 1.0.0
+ * @version 1.1.1
  */
 
 // If uninstall not called from WordPress exit
