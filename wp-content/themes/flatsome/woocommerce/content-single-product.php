@@ -1,26 +1,37 @@
 <?php
- 
-	global $post, $product, $flatsome_opt;
 
-	// Get category permalink
-	$permalinks 	= get_option( 'woocommerce_permalinks' );
-	$category_slug 	= empty( $permalinks['category_base'] ) ? _x( 'product-category', 'slug', 'woocommerce' ) : $permalinks['category_base'];
+    /**
+     * The template for displaying lookbook product style content within loops.
+     *
+     * Override this template by copying it to yourtheme/woocommerce/content-product.php
+     *
+     * @author      WooThemes
+     * @package     WooCommerce/Templates
+     * @version     1.6.4
+     */
+
+ 
+    global $post, $product, $flatsome_opt;
+
+    // Get category permalink
+    $permalinks     = get_option( 'woocommerce_permalinks' );
+    $category_slug  = empty( $permalinks['category_base'] ) ? _x( 'product-category', 'slug', 'woocommerce' ) : $permalinks['category_base'];
  
 ?>
 
-<div itemscope itemtype="http://schema.org/Product" id="product-<?php the_ID(); ?>" <?php post_class(); ?>>	
+<?php
+    /**
+     * woocommerce_before_single_product hook
+     *
+     * @hooked woocommerce_show_messages - 10
+     */
+     do_action( 'woocommerce_before_single_product' );
+?>  
+
+<div itemscope itemtype="http://schema.org/Product" id="product-<?php the_ID(); ?>" <?php post_class(); ?>> 
     
 <div class="row">    
-    	<?php
-			/**
-			 * woocommerce_before_single_product hook
-			 *
-			 * @hooked woocommerce_show_messages - 10
-			 */
-			 do_action( 'woocommerce_before_single_product' );
-		?>    
         <div class="large-6 columns product-gallery">        
-        
             <?php
                 /**
                  * woocommerce_show_product_images hook
@@ -30,7 +41,6 @@
                  */
                 do_action( 'woocommerce_before_single_product_summary' );
             ?>
-        
         </div><!-- end large-6 - product-gallery -->
         
         <div class="product-info large-4 small-12 columns left">
@@ -68,8 +78,8 @@
     
     
 <?php
-	//Get the Thumbnail URL for pintrest
-	$src = wp_get_attachment_image_src( get_post_thumbnail_id($post->ID), false, '' );
+    //Get the Thumbnail URL for pintrest
+    $src = wp_get_attachment_image_src( get_post_thumbnail_id($post->ID), false, '' );
 ?>
 
 
@@ -91,8 +101,8 @@
 </div><!-- .row -->
 
 
-	<div class="related-product">
-		<?php
+    <div class="related-product">
+        <?php
             /**
              * woocommerce_after_single_product_summary hook
              *

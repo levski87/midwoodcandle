@@ -56,7 +56,7 @@ class Flatsome_Recent_Post_Widget extends WP_Widget {
                 </div>
          
                 <a href="<?php the_permalink() ?>" title="<?php echo esc_attr( get_the_title() ? get_the_title() : get_the_ID() ); ?>"><?php if ( get_the_title() ) the_title(); else the_ID(); ?></a>
-				<div class="post_comments"><?php echo get_comments_number(); ?> comments</div>
+				<div class="post_comments"><?php comments_popup_link( __( 'Leave a comment', 'flatsome' ), __( '<strong>1</strong> Comment', 'flatsome' ), __( '<strong>%</strong> Comments', 'flatsome' ) ); ?></div>
             </li>
 		<?php endwhile; ?>
 		</ul>

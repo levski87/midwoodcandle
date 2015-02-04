@@ -154,12 +154,14 @@ class Options_Machine {
 			
 			//switch statement to handle various options type                              
 			switch ( $value['type'] ) {
+
+
 			
 				//text input
 				case 'text':
 					$t_value = '';
 					$t_value = stripslashes($smof_data[$value['id']]);
-					
+					$t_value = str_replace('"',"'",$t_value);
 					$mini ='';
 					if(!isset($value['mod'])) $value['mod'] = '';
 					if($value['mod'] == 'mini') { $mini = 'mini';}
@@ -182,6 +184,16 @@ class Options_Machine {
 						$output .= '<option id="' . $select_ID . '" value="'.$theValue.'" ' . selected($smof_data[$value['id']], $theValue, false) . ' />'.$option.'</option>';	 
 					 } 
 					$output .= '</select></div>';
+				break;
+
+
+				case 'presets':
+					$output .= '<a href="#" class="button-primary">Select presets</a>';
+					$output .= '<div class="pre_select_wrapper">';
+					foreach ($value['options'] as $select_ID => $option) {
+						$output .= '<a href="#" data-preset="'.$option.'"><img class="pre-select-img" style="width:100%;" src="'.$select_ID.'"/></a>';
+					 } 
+					$output .= '</div>';
 				break;
 				
 				//textarea option

@@ -4,7 +4,7 @@
  *
  * @author 		WooThemes
  * @package 	WooCommerce/Templates
- * @version     2.0.3
+ * @version     2.1.0
  */
 global $woocommerce, $product;
 
@@ -61,7 +61,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 			</div>
 		<?php endif;
 
-		$title_reply = __( 'Add a Review', 'woocommerce' ).' &ldquo;'.$post->post_title.'&rdquo;';
+		$title_reply = __( 'Add a review', 'woocommerce' ).' &ldquo;'.$post->post_title.'&rdquo;';
 
 	else :
 
@@ -91,14 +91,14 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 			'email'  => '<p class="comment-form-email"><label for="email">' . __( 'Email', 'woocommerce' ) . '</label> ' . '<span class="required">*</span>' .
 			            '<input id="email" name="email" type="text" value="' . esc_attr(  $commenter['comment_author_email'] ) . '" size="30" aria-required="true" /></p>',
 		),
-		'label_submit' => __( 'Submit Review', 'woocommerce' ),
+		'label_submit' => __( 'Submit', 'woocommerce' ),
 		'logged_in_as' => '',
 		'comment_field' => ''
 	);
 
 	if ( get_option('woocommerce_enable_review_rating') == 'yes' ) {
 
-		$comment_form['comment_field'] = '<p class="comment-form-rating"><label for="rating">' . __( 'Rating', 'woocommerce' ) .'</label><select name="rating" id="rating">
+		$comment_form['comment_field'] = '<p class="comment-form-rating"><label for="rating">' . __( 'Your Rating', 'woocommerce' ) .'</label><select name="rating" id="rating">
 			<option value="">'.__( 'Rate&hellip;', 'woocommerce' ).'</option>
 			<option value="5">'.__( 'Perfect', 'woocommerce' ).'</option>
 			<option value="4">'.__( 'Good', 'woocommerce' ).'</option>
@@ -109,7 +109,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 	}
 
-	$comment_form['comment_field'] .= '<p class="comment-form-comment"><label for="comment">' . __( 'Your Review', 'woocommerce' ) . '</label><textarea id="comment" name="comment" cols="45" rows="22" aria-required="true"></textarea></p>' . $woocommerce->nonce_field('comment_rating', false, false);
+	$comment_form['comment_field'] .= '<p class="comment-form-comment"><label for="comment">' . __( 'Your Review', 'woocommerce' ) . '</label><textarea id="comment" name="comment" cols="45" rows="22" aria-required="true"></textarea></p>' . wp_nonce_field('comment_rating', false, false);
 
 	comment_form( apply_filters( 'woocommerce_product_review_comment_form_args', $comment_form ) );
 

@@ -7,22 +7,6 @@ global $flatsome_opt;
 <!--[if lte IE 9 ]><html class="ie lt-ie9" <?php language_attributes(); ?>> <![endif]-->
 <!--[if (gte IE 9)|!(IE)]><!--><html <?php language_attributes(); ?>> <!--<![endif]-->
 <head>
-
-<!-- Google Analytics Code -->
-
-<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-  ga('create', 'UA-57039304-1', 'auto');
-  ga('send', 'pageview');
-
-</script>
-
-<!-- End Google Analytics Code -->
-
 	<meta charset="<?php bloginfo( 'charset' ); ?>" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 	<title><?php wp_title( '|', true, 'right' ); ?></title>
@@ -42,20 +26,24 @@ global $flatsome_opt;
 </head>
 
 <body <?php body_class(); ?>>
-	<div id="wrapper">
 
+<?php 
+// HTML Homepage Before Header // Set in Theme Option > HTML Blocks
+if($flatsome_opt['html_intro'] && is_front_page()) echo '<div class="home-intro">'.do_shortcode($flatsome_opt['html_intro']).'</div>' ?>
+
+	<div id="wrapper"<?php if($flatsome_opt['box_shadow']) echo ' class="box-shadow"';?>>
+		<div class="header-wrapper before-sticky">
 		<?php do_action( 'before' ); ?>
-
 		<?php if(!isset($flatsome_opt['topbar_show']) || $flatsome_opt['topbar_show']){ ?>
 		<div id="top-bar">
 			<div class="row">
 				<div class="large-12 columns">
 					<!-- left text -->
 					<div class="left-text left">
-						<div class="html"><?php echo $flatsome_opt['topbar_left']; ?></div><!-- .html -->
+						<div class="html"><?php echo do_shortcode( $flatsome_opt['topbar_left']);?></div><!-- .html -->
 					</div>
 					<!-- right text -->
-					<div class="right-text right hide-for-small">
+					<div class="right-text right">
 						 <?php if ( has_nav_menu( 'top_bar_nav' ) ) : ?>
 						<?php  
 								wp_nav_menu(array(
@@ -81,7 +69,6 @@ global $flatsome_opt;
 		<?php }?>
 
 
-
 		<header id="masthead" class="site-header" role="banner">
 			<div class="row"> 
 				<div class="large-12 columns header-container">
@@ -93,13 +80,18 @@ global $flatsome_opt;
 							<?php if($flatsome_opt['site_logo']){
 								$site_title = esc_attr( get_bloginfo( 'name', 'display' ) );
 								echo '<img src="'.$flatsome_opt['site_logo'].'" class="header_logo" alt="'.$site_title.'"/>';
+								if ( is_page_template( 'page-transparent-header-light.php' )) {
+								  if($flatsome_opt['site_logo_dark']){
+								  	echo '<img src="'.$flatsome_opt['site_logo_dark'].'" class="header_logo_dark" alt="'.$site_title.'"/>';
+								  }
+								}
 							} else {bloginfo( 'name' );}?>
 						</a>
 					</div><!-- .logo -->
 					<?php endif; ?>
 
 					<div class="left-links">
-						<?php if(!isset($flatsome_opt['nav_position']) || $flatsome_opt['nav_position'] == 'top') { ?>
+						<?php if(!isset($flatsome_opt['nav_position']) || $flatsome_opt['nav_position'] == 'top'){ ?>
 							<ul id="site-navigation" class="header-nav">
 								<?php if ( has_nav_menu( 'primary' ) ) : ?>
 								
@@ -143,7 +135,7 @@ global $flatsome_opt;
 		                            <li>Define your main navigation in <b>Apperance > Menus</b></li>
 		                        <?php endif; ?>								
 							</ul>
-						<?php } else { ?>
+						<?php } else if($flatsome_opt['nav_position'] == 'bottom' || $flatsome_opt['nav_position'] == 'bottom_center') { ?>
  
 						<div class="wide-nav-search hide-for-small">
 							<?php if($flatsome_opt['search_pos'] == 'left'){ ?>
@@ -171,6 +163,11 @@ global $flatsome_opt;
 							<?php if($flatsome_opt['site_logo']){
 								$site_title = esc_attr( get_bloginfo( 'name', 'display' ) );
 								echo '<img src="'.$flatsome_opt['site_logo'].'" class="header_logo" alt="'.$site_title.'"/>';
+								if ( is_page_template( 'page-transparent-header-light.php' )) {
+								  if($flatsome_opt['site_logo_dark']){
+								  	echo '<img src="'.$flatsome_opt['site_logo_dark'].'" class="header_logo_dark" alt="'.$site_title.'"/>';
+								  }
+								}
 							} else {bloginfo( 'name' );}?>
 						</a>
 					</div><!-- .logo -->
@@ -178,12 +175,59 @@ global $flatsome_opt;
 
 					<div class="right-links">
 						<?php if(!$flatsome_opt['catalog_mode']) { ?> 
-						<ul class="header-nav">
+						<ul <?php if($flatsome_opt['nav_position'] == 'top_right'){ ?>id="site-navigation"<?php } ?> class="header-nav">
+							
+						<?php if($flatsome_opt['nav_position'] == 'top_right'){ ?>
+								<?php if ( has_nav_menu( 'primary' ) ) { ?>
+								
+								<?php if (!isset($flatsome_opt['search_pos']) || $flatsome_opt['search_pos'] == 'left') { ?>
+								<li class="search-dropdown">
+									<a href="#" class="nav-top-link icon-search" onClick="return false;"></a>
+									<div class="nav-dropdown">
+										<?php if(function_exists('get_product_search_form')) {
+											get_product_search_form();
+										} else {
+											get_search_form();
+										} ?>	
+									</div><!-- .nav-dropdown -->
+								</li><!-- .search-dropdown -->
+								<?php } ?>
+
+									<?php  
+									wp_nav_menu(array(
+										'theme_location' => 'primary',
+										'container'       => false,
+										'items_wrap'      => '%3$s',
+										'depth'           => 0,
+										'walker'          => new FlatsomeNavDropdown
+									));
+								?>
+
+								<?php if (isset($flatsome_opt['search_pos']) && $flatsome_opt['search_pos'] == 'right') { ?>
+								<li class="search-dropdown">
+									<a href="#" class="nav-top-link icon-search"></a>
+									<div class="nav-dropdown">
+										<?php if(function_exists('get_product_search_form')) {
+											get_product_search_form();
+										} else {
+											get_search_form();
+										} ?>		
+									</div><!-- .nav-dropdown -->
+								</li><!-- .search-dropdown -->
+								<?php } ?>
+		                    <?php } ?>		
+		                   	<?php } // primary-nav right style ?>
+
+							<?php if($flatsome_opt['top_right_text']) { ?>
+							<li class="html-block">
+								<div class="html-block-inner hide-for-small"><?php echo do_shortcode($flatsome_opt['top_right_text']); ?></div>
+							</li>
+							<?php } ?>
 							<?php if(!isset($flatsome_opt['myaccount_dropdown']) || $flatsome_opt['myaccount_dropdown']) { ?>
 							<li class="account-dropdown hide-for-small">
 								<?php
 								if ( is_user_logged_in() ) { ?> 
-								<a href="<?php echo get_permalink( get_option('woocommerce_myaccount_page_id') ); ?>" class="nav-top-link">
+								<a href="<?php echo get_permalink( get_option('woocommerce_myaccount_page_id') ); ?>" class="nav-top-link nav-top-login">
 									<?php _e('My Account', 'woocommerce'); ?>
 								</a>
 								<div class="nav-dropdown">
@@ -204,21 +248,21 @@ global $flatsome_opt;
 								</div><!-- end account dropdown -->
 								
 							<?php } else { ?>
-							<a href="<?php echo get_permalink( get_option('woocommerce_myaccount_page_id') ); ?>" class="nav-top-link"><?php _e('Login', 'woocommerce'); ?></a>
+							<a href="<?php echo get_permalink( get_option('woocommerce_myaccount_page_id') ); ?>" class="nav-top-link nav-top-not-logged-in"><?php _e('Login', 'woocommerce'); ?></a>
 							<?php
 						}
 						?>						
 						</li>
 					<?php } ?>
-		
 
 					<!-- Show mini cart if Woocommerce is activated -->
-					<?php if(in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) { ?> 
+					<?php if(!isset($flatsome_opt['show_cart']) || $flatsome_opt['show_cart'] == 1) { ?>
+					<?php if(function_exists('wc_print_notices')) { ?> 
 					<li class="mini-cart">
 						<div class="cart-inner">
 							<?php // Edit this content in inc/template-tags.php. Its gets relpaced with Ajax! ?>
 							<a href="<?php echo esc_url( $woocommerce->cart->get_cart_url() ); ?>" class="cart-link">
-								<strong class="cart-name hide-for-small"><?php _e('Cart', 'flatsome'); ?></strong> 
+								<strong class="cart-name hide-for-small"><?php _e('Cart', 'woocommerce'); ?></strong> 
 								<span class="cart-price hide-for-small">/ <?php echo $woocommerce->cart->get_cart_total(); ?></span> 
 									<!-- cart icon -->
 									<div class="cart-icon">
@@ -246,7 +290,8 @@ global $flatsome_opt;
 							</div><!-- .nav-dropdown -->
 						</div><!-- .cart-inner -->
 					</li><!-- .mini-cart -->
-					<?php } else {echo '<li>WooCommerce not installed!</li>';} ?>
+					<?php } ?>
+					<?php } ?>
 				</ul><!-- .header-nav -->
 				<?php } else { ?>
 				<div class="catalog-mode-header">
@@ -257,34 +302,50 @@ global $flatsome_opt;
 			</div><!-- .right-links -->
 		</div><!-- .large-12 -->
 	</div><!-- .row -->
+
+
 </header><!-- .header -->
 
 <?php if($flatsome_opt['nav_position'] == 'bottom' || $flatsome_opt['nav_position'] == 'bottom_center') { ?>
 <!-- Main navigation - Full width style -->
-<div class="wide-nav hide-for-small  <?php echo $flatsome_opt['nav_position_color']; ?> <?php if($flatsome_opt['nav_position'] == 'bottom_center') {echo 'nav-center';} else {echo 'nav-left';} ?>">
+<div class="wide-nav <?php echo $flatsome_opt['nav_position_color']; ?> <?php if($flatsome_opt['nav_position'] == 'bottom_center') {echo 'nav-center';} else {echo 'nav-left';} ?>">
 	<div class="row">
 		<div class="large-12 columns">
 		<div class="nav-wrapper">
 		<ul id="site-navigation" class="header-nav">
-							<?php if ( has_nav_menu( 'primary' ) ) : ?>
-								<?php  
-								wp_nav_menu(array(
-									'theme_location' => 'primary',
-									'container'       => false,
-									'items_wrap'      => '%3$s',
-									'depth'           => 3,
-									'walker'          => new FlatsomeNavDropdown
-								));
-							?>
+				<?php if ( has_nav_menu( 'primary' ) ) : ?>
+					<?php  
+					wp_nav_menu(array(
+						'theme_location' => 'primary',
+						'container'       => false,
+						'items_wrap'      => '%3$s',
+						'depth'           => 3,
+						'walker'          => new FlatsomeNavDropdown
+					));
+				?>
 
+				<?php if($flatsome_opt['search_pos'] == 'right' && $flatsome_opt['nav_position'] == 'bottom_center'){ ?>
+					<li class="search-dropdown">
+					<a href="#" class="nav-top-link icon-search" onClick="return false;"></a>
+					<div class="nav-dropdown">
+						<?php if(function_exists('get_product_search_form')) {
+							get_product_search_form();
+						} else {
+							get_search_form();
+						} ?>	
+					</div><!-- .nav-dropdown -->
+				</li><!-- .search-dropdown -->
+				<?php } ?>
               <?php else: ?>
                   <li>Define your main navigation in <b>Apperance > Menus</b></li>
               <?php endif; ?>								
 		</ul>
 		<?php if($flatsome_opt['nav_position'] == 'bottom') { ?>
-		<div class="right">
+		<div class="right hide-for-small">
 			<div class="wide-nav-right">
+				<div>
 				<?php echo do_shortcode($flatsome_opt['nav_position_text']); ?>
+			</div>
 				<?php if($flatsome_opt['search_pos'] == 'right'){ ?>
 							<div>
 									<?php if(function_exists('get_product_search_form')) {
@@ -297,25 +358,26 @@ global $flatsome_opt;
 			</div>
 		</div>
 		<?php } ?>
-		</div><!-- nav-wrapper -->
+		</div><!-- .nav-wrapper -->
 		</div><!-- .large-12 -->
 	</div><!-- .row -->
 </div><!-- .wide-nav -->
 <?php } ?>
+</div><!-- .header-wrapper -->
 
-<?php if(isset($flatsome_opt['html_after_header'])){
-	// AFTER HEADER HTML BLOCK
-	echo do_shortcode($flatsome_opt['html_after_header']);
-} ?>
-
-<div id="main-content" class="site-main <?php echo $flatsome_opt['content_color']; ?>">
+<div id="main-content" class="site-main  <?php echo $flatsome_opt['content_color']; ?>">
 <?php 
 //adds a border line if header is white
-if (strpos($flatsome_opt['header_bg'],'#fff') !== false || $flatsome_opt['nav_position'] == 'top') {
+if (strpos($flatsome_opt['header_bg'],'#fff') !== false && $flatsome_opt['nav_position'] == 'top') {
 		  echo '<div class="row"><div class="large-12 columns"><div class="top-divider"></div></div></div>';
 } ?>
 
-<?php if(in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) { ?> 
-	<!-- woocommerce message -->
-	<?php  woocommerce_show_messages(); ?>
-<?php } ?>	
+<?php if($flatsome_opt['html_after_header']){
+	// AFTER HEADER HTML BLOCK
+	echo '<div class="block-html-after-header" style="position:relative;top:-1px;">';
+	echo do_shortcode($flatsome_opt['html_after_header']);
+	echo '</div>';
+} ?>
+
+<!-- woocommerce message -->
+<?php  if(function_exists('wc_print_notices')) {wc_print_notices();}?>

@@ -4,9 +4,9 @@
  */
 
 global $flatsome_opt;
-
 ?>
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+	<?php if($flatsome_opt['blog_post_style'] == 'default' || !isset($flatsome_opt['blog_post_style'])) { ?> 
 	<header class="entry-header text-center">
 		<h1 class="entry-title"><?php the_title(); ?></h1>
 		<div class="tx-div small"></div>
@@ -14,15 +14,19 @@ global $flatsome_opt;
 			<?php flatsome_posted_on(); ?>
 		</div><!-- .entry-meta -->
 	</header><!-- .entry-header -->
+	
 
 	<?php if ( has_post_thumbnail() ) { // check if the post has a Post Thumbnail assigned to it. ?>
     <div class="entry-image">
-            <?php the_post_thumbnail(); ?>
+    		<?php if($flatsome_opt['blog_parallax']) { ?><div class="parallax_img" style="overflow:hidden"><div class="parallax_img_inner" data-velocity="0.15"><?php } ?>
+            <?php the_post_thumbnail('large'); ?>
+            <?php if($flatsome_opt['blog_parallax']) { ?></div></div><?php } ?>
             <div class="post-date large">
 	                <span class="post-date-day"><?php echo get_the_time('d', get_the_ID()); ?></span>
 	                <span class="post-date-month"><?php echo get_the_time('M', get_the_ID()); ?></span>
             </div>
     </div>
+    <?php } ?>
     <?php } ?>
 
 	<div class="entry-content">
@@ -72,10 +76,6 @@ global $flatsome_opt;
 
 
 	</footer><!-- .entry-meta -->
-
-
-
-
 		<?php  if(isset($flatsome_opt['blog_author_box']) && $flatsome_opt['blog_author_box']) { ?>
 			<div class="author-box">
 				<div class="row">
@@ -89,7 +89,7 @@ global $flatsome_opt;
 					
 					</div>
 					<div class="large-10 small-9 columns">
-					<h4 class="author-name">by <?php echo get_the_author_meta('display_name');?></h4>
+					<h4 class="author-name"><?php _e('by','flatsome') ?> <?php echo get_the_author_meta('display_name');?></h4>
 					
 					<?php if(get_the_author_meta('yim')){?>
 					<p class="author-title"><?php echo get_the_author_meta('yim'); ?></p>
@@ -106,6 +106,4 @@ global $flatsome_opt;
 		<?php } ?>
 		
 		<?php flatsome_content_nav( 'nav-below' ); ?>
-
-		
 </article><!-- #post-## -->

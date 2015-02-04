@@ -22,23 +22,25 @@ if (!is_user_logged_in() && $current_url != $myaccount_page && $wishlist_url != 
 
 get_header(); 
 ?>
-
 <?php if(in_array( 'nextend-facebook-connect/nextend-facebook-connect.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) && $flatsome_opt['facebook_login'] && get_option('woocommerce_enable_myaccount_registration')=='yes' && !is_user_logged_in())  { ?> 
 <div id="facebook-login" class="ux_banner dark" style="height:180px">
+	    <div class="banner-bg" style="background-image:url('<?php echo $flatsome_opt['facebook_login_bg']; ?>');background-color:#ddd"></div>
         <div class="row">
-          	<div class="inner center animated text-center fadeInDown" style="width: 60%;">
-      			<a href="<?php echo wp_login_url(); ?>?loginFacebook=1&redirect=<?php echo the_permalink(); ?>" class="button large facebook-button " onclick="window.location = '<?php echo wp_login_url(); ?>?loginFacebook=1&redirect='+window.location.href; return false;"><i class="icon-facebook"></i><?php _e('Login / Register with <strong>Facebook</strong>','flatsome'); ?></a>
-      			<p><?php echo $flatsome_opt['facebook_login_text']; ?></p>
+          	<div class="inner center  text-center " style="width: 60%;">
+          		<div class="inner-wrap animated fadeInDown">
+		              	<a href="<?php echo wp_login_url(); ?>?loginFacebook=1&redirect=<?php echo the_permalink(); ?>" class="button large facebook-button " onclick="window.location = '<?php echo wp_login_url(); ?>?loginFacebook=1&redirect='+window.location.href; return false;"><i class="icon-facebook"></i><?php _e('Login / Register with <strong>Facebook</strong>','flatsome'); ?></a>
+      					<p><?php echo $flatsome_opt['facebook_login_text']; ?></p>
+		          </div>
          	</div>  
          </div>
-        <div class="banner-bg" style="background-image:url('<?php echo $flatsome_opt['facebook_login_bg']; ?>');background-color:#ddd"></div>
 </div>
 <?php } ?>	
 
-
+<?php if( has_excerpt() ) { ?>
 <div class="page-header">
-<?php if( has_excerpt() ) the_excerpt();?>
+	<?php the_excerpt(); ?>
 </div>
+<?php } ?>
 
 <div  class="page-wrapper my-account">
 <div class="row">
@@ -51,13 +53,13 @@ get_header();
 	<?php if(is_user_logged_in()){?>
 		<div class="account-user hide-for-small">
 		<?php 
-			 	 $current_user = wp_get_current_user();
-			 	 $user_id = $current_user->ID;
+			 	$current_user = wp_get_current_user();
+			 	$user_id = $current_user->ID;
 				echo get_avatar( $user_id, 60 );
 	    ?>
 
 	    <span class="user-name"><?php echo $current_user->display_name?> <em><?php echo '#'.$user_id;?></em></span>
-	   	<span class="logout-link"><a href="<?php echo wp_logout_url(); ?>">Log out</a></span>		 
+	   	<span class="logout-link"><a href="<?php echo wp_logout_url(); ?>"><?php _e('Logout','woocommerce'); ?></a></span>		 
 
 	    <br>
 	</div>
@@ -78,7 +80,7 @@ get_header();
 </div><!-- .large-3 -->
 
 <div class="large-9 columns">
-	<div class="tabs-inner">		
+	<div class="tabs-inner active">		
 	
 
 			<?php while ( have_posts() ) : the_post(); ?>

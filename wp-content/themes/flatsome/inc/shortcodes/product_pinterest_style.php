@@ -3,9 +3,9 @@
 function products_pinterest_style($atts, $content = null) {
 	$sliderrandomid = rand();
 	extract(shortcode_atts(array(
-		"title" => '',
 		'products'  => '999',
-        'cat' => ''
+        'cat' => '',
+        'columns' => '3'
 	), $atts));
 	ob_start();
 	?>
@@ -17,7 +17,7 @@ function products_pinterest_style($atts, $content = null) {
 	if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
 	?>
     
-  <script>
+  	<script>
 	/* PACKERY GRID */
 	jQuery(document).ready(function ($) {
 	    var $container = $(".pinterest-style");
@@ -34,7 +34,7 @@ function products_pinterest_style($atts, $content = null) {
 	</script>
 	<div class="row collapse">
 	<div class="large-12 columns">
-                <ul class="pinterest-style">
+                <ul class="pinterest-style large-block-grid-<?php echo $columns; ?>">
 				  <?php
                     $args = array(
                         'post_type' => 'product',
@@ -49,9 +49,10 @@ function products_pinterest_style($atts, $content = null) {
                     if ( $products->have_posts() ) : ?>
                                 
                         <?php while ( $products->have_posts() ) : $products->the_post(); ?>
-                    
+                        <li class="featured-product">
                             <?php woocommerce_get_template_part( 'content', 'product-pinterest-style' ); ?>
-                
+               			 </li><!-- end product -->
+
                         <?php endwhile; // end of the loop. ?>
                         
                     <?php

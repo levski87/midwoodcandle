@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
         'home'    => true
     );
     $args = wp_parse_args(  $defaults  );
-    woocommerce_get_template( 'shop/breadcrumb-single-product.php', $args );
+    woocommerce_get_template( 'global/breadcrumb-single-product.php', $args );
     ?>
 
 <h1 itemprop="name" class="entry-title"><?php the_title(); ?></h1>

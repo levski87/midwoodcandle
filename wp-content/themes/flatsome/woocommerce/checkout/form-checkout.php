@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 global $woocommerce, $flatsome_opt;
 
-$woocommerce->show_messages();
+wc_print_notices();
 
 ?>
 
@@ -31,17 +31,15 @@ if ( ! $checkout->enable_signup && ! $checkout->enable_guest_checkout && ! is_us
 $get_checkout_url = apply_filters( 'woocommerce_get_checkout_url', $woocommerce->cart->get_checkout_url() ); ?>
 
 
-
 <!-- LOGIN -->
 <?php	if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
-
 if ( is_user_logged_in()  || ! $checkout->enable_signup ) {} else {
-
 $info_message = apply_filters( 'woocommerce_checkout_login_message', __( 'Returning customer?', 'woocommerce' ) );
 ?>
 
 <?php  if(in_array( 'nextend-facebook-connect/nextend-facebook-connect.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) && $flatsome_opt['facebook_login_checkout'])  { ?> 
       	<a href="<?php echo wp_login_url(); ?>?loginFacebook=1&redirect=<?php echo the_permalink(); ?>" class="button medium facebook-button " onclick="window.location = '<?php echo wp_login_url(); ?>?loginFacebook=1&redirect='+window.location.href; return false;"><i class="icon-facebook"></i><?php _e('Login / Register with <strong>Facebook</strong>','flatsome'); ?></a>
+		<p class="woocommerce-info"><?php echo esc_html( $info_message ); ?> <a href="#" class="showlogin"><?php _e( 'Click here to login', 'woocommerce' ); ?></a></p>
 <?php } else { ?>
 		<p class="woocommerce-info"><?php echo esc_html( $info_message ); ?> <a href="#" class="showlogin"><?php _e( 'Click here to login', 'woocommerce' ); ?></a></p>
 <?php } ?>	
@@ -60,11 +58,12 @@ $info_message = apply_filters( 'woocommerce_checkout_login_message', __( 'Return
 
 
 </div><!-- .large-12 -->
+</div>
 
 
 	<form name="checkout" method="post" class="checkout" action="<?php echo esc_url( $get_checkout_url ); ?>">
-
-
+	
+	<div class="row">
 	<div id="customer_details" class="large-7  columns">
 
 	<?php if ( sizeof( $checkout->checkout_fields ) > 0 ) : ?>
@@ -72,15 +71,13 @@ $info_message = apply_filters( 'woocommerce_checkout_login_message', __( 'Return
 		<?php do_action( 'woocommerce_checkout_before_customer_details' ); ?>
 
 	<div class="checkout-group woo-billing">
-				<?php do_action( 'woocommerce_checkout_billing' ); ?>
+		<?php do_action( 'woocommerce_checkout_billing' ); ?>
 
 	</div>
 
 	<div class="checkout-group woo-shipping">
-					<?php do_action( 'woocommerce_checkout_shipping' ); ?>
+		 <?php do_action( 'woocommerce_checkout_shipping' ); ?>
 	</div>
-
-
 
 
 	</div><!-- .large-7 -->
@@ -95,22 +92,11 @@ $info_message = apply_filters( 'woocommerce_checkout_login_message', __( 'Return
 
 		<?php do_action( 'woocommerce_checkout_order_review' ); ?>
 
-		<?php do_action( 'woocommerce_after_checkout_form', $checkout ); ?>
-
-
 		</div>
-
-
-
 	</div><!-- .large-5 -->
-
-		</form><!-- .checkout -->
-
-	<div class="large-4 columns">
-		<?php  woocommerce_get_template_part('checkout/form-coupon'); ?>
-	</div>
-
-</div><!-- .row -->
+	</div><!-- .row -->
+    </form><!-- .checkout -->
+    <?php do_action( 'woocommerce_after_checkout_form', $checkout ); ?>
 
 
-	
+

@@ -1,16 +1,19 @@
 <?php
 // [blog_posts]
 function shortcode_latest_from_blog($atts, $content = null) {
+	global $flatsome_opt;
 	$sliderrandomid = rand();
 	extract(shortcode_atts(array(
-		"title" => '',
 		"posts" => '8',
 		"columns" => '4',
-		"category" => ''
+		"category" => '',
+		"style" => 'text-normal',
+		"image_height" => 'auto',
+		"show_date" => 'true',
+		"excerpt" => 'true',
 	), $atts));
 	ob_start();
-	?> 
-    
+	?>
     <script>
 	jQuery(document).ready(function($) {
 		$(window).load(function() {
@@ -24,11 +27,10 @@ function shortcode_latest_from_blog($atts, $content = null) {
 				onSliderLoaded: slideLoad,
 				onSliderResize: slideLoad
 			});
-
-			function slideLoad(args) {
+			function slideLoad(args){
 		     	setTimeout(function(){
-		     		var t=0; 
-					 var t_elem;  
+		     		var t=0;
+					 var t_elem;
 					 $(args.sliderContainerObject).find('li').each(function () {
 					    $this = $(this);
 					    if ( $this.outerHeight() > t ) {
@@ -43,9 +45,9 @@ function shortcode_latest_from_blog($atts, $content = null) {
 	});
 	</script>
     	<div class="row column-slider">
-            <div id="slider_<?php echo $sliderrandomid ?>" class="iosSlider blog-posts" style="">
+            <div id="slider_<?php echo $sliderrandomid ?>" class="iosSlider blog-posts <?php if($style  == 'text-overlay') { ?>slider-center-arrows<?php } ?>" style="min-height:<?php echo $image_height; ?>;height:<?php echo $image_height; ?>;">
                 <ul class="slider large-block-grid-<?php echo $columns ?> small-block-grid-2">
-					
+
 					<?php
                     $args = array(
                         'post_status' => 'publish',
@@ -53,45 +55,56 @@ function shortcode_latest_from_blog($atts, $content = null) {
 						'category_name' => $category,
                         'posts_per_page' => $posts
                     );
-                    
+
                     $recentPosts = new WP_Query( $args );
-                    
+
                     if ( $recentPosts->have_posts() ) : ?>
-                                
+
                         <?php while ( $recentPosts->have_posts() ) : $recentPosts->the_post(); ?>
-                    
-                            <li class="blog_shortcode_item text-center">
-                           	<a href="<?php the_permalink() ?>">
-                       		 <div class="entry-image">
-					            <?php the_post_thumbnail('medium'); ?>
-				            <div class="post-date">
-					                <span class="post-date-day"><?php echo get_the_time('d', get_the_ID()); ?></span>
-					                <span class="post-date-month"><?php echo get_the_time('M', get_the_ID()); ?></span>
-					         </div>
-					         </div><!-- entry image -->
-        					<div class="blog_shortcode_text">
-                   		      <div class="from_the_blog_title"><h3><?php the_title(); ?></h3></div>	
-                   		     <div class="tx-div small"></div>
-                   		      <div class="from_the_blog_excerpt">
-                                <?php
-                                    $excerpt = get_the_excerpt();
-                                    echo string_limit_words($excerpt,15) . '[...]';
-                                ?>
-                                 	   	</div>
-                   		      <div class="from_the_blog_comments"><?php echo get_comments_number( get_the_ID() ); ?> comments</div>
-                   		  	</div><!-- .post_shortcode_text -->   
-                   		  	</a>                 
-                            </li>
-                
+
+						<li class="ux-box text-center post-item ux-<?php echo $style; ?>">
+						    <div class="inner">
+						      <div class="inner-wrap">
+							    <a href="<?php the_permalink() ?>">
+							      <div class="ux-box-image">
+								        <div class="entry-image-attachment" style="max-height:<?php echo  $image_height; ?>;overflow:hidden;">
+											<?php the_post_thumbnail('medium'); ?>
+										</div>
+							      </div><!-- .ux-box-image -->
+							      <div class="ux-box-text text-vertical-center">
+							         	<h3 class="from_the_blog_title"><?php the_title(); ?></h3>
+							         	<div class="tx-div small"></div>
+							            <?php if($excerpt != 'false') { ?>
+								            <p class="from_the_blog_excerpt small-font show-next"><?php
+								                $excerpt = get_the_excerpt();
+								                echo string_limit_words($excerpt,15) . '[...]';
+								            ?>
+								     	   </p>
+								     	 <?php } ?>
+							           <p class="from_the_blog_comments uppercase smallest-font"><?php echo get_comments_number( get_the_ID() ); ?> comments</p>
+							        	
+							         </div><!-- .post_shortcode_text -->
+							    </a>
+
+								   <?php if($show_date != 'false') {?>
+											            <div class="post-date">
+												                <span class="post-date-day"><?php echo get_the_time('d', get_the_ID()); ?></span>
+												                <span class="post-date-month"><?php echo get_the_time('M', get_the_ID()); ?></span>
+												         </div>
+									<?php } ?>
+								</div><!-- .inner-wrap -->
+						    </div><!-- .inner -->
+						</li><!-- .blog-item -->
+                          
                         <?php endwhile; // end of the loop. ?>
-                        
+
                     <?php
 
                     endif;
 					wp_reset_query();
-                    
+
                     ?>
-                </ul>   <!-- .slider -->  
+                </ul>   <!-- .slider -->
 
 				<div class="sliderControlls dark">
 			        <div class="sliderNav small hide-for-small">
@@ -101,7 +114,7 @@ function shortcode_latest_from_blog($atts, $content = null) {
        		    </div><!-- .sliderControlls -->
         </div> <!-- .iOsslider -->
     </div><!-- .row .column-slider -->
-    
+
 
 	<?php
 	$content = ob_get_contents();

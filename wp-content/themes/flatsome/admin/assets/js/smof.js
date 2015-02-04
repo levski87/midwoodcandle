@@ -76,55 +76,7 @@ jQuery(document).ready(function($){
 						
 	});
 
-	//Expand Options 
-	var flip = 0;
-				
-	$('#expand_options').click(function(){
-		if(flip == 0){
-			flip = 1;
-			$('#of_container #of-nav').hide();
-			$('#of_container #content').width(755);
-			$('#of_container .group').add('#of_container .group h2').show();
 	
-			$(this).removeClass('expand');
-			$(this).addClass('close');
-			$(this).text('Close');
-					
-		} else {
-			flip = 0;
-			$('#of_container #of-nav').show();
-			$('#of_container #content').width(595);
-			$('#of_container .group').add('#of_container .group h2').hide();
-			$('#of_container .group:first').show();
-			$('#of_container #of-nav li').removeClass('current');
-			$('#of_container #of-nav li:first').addClass('current');
-					
-			$(this).removeClass('close');
-			$(this).addClass('expand');
-			$(this).text('Expand');
-				
-		}
-			
-	});
-	
-	//Update Message popup
-	$.fn.center = function () {
-		this.animate({"top":( $(window).height() - this.height() - 200 ) / 2+$(window).scrollTop() + "px"},100);
-		this.css("left", 250 );
-		return this;
-	}
-		
-			
-	$('#of-popup-save').center();
-	$('#of-popup-reset').center();
-	$('#of-popup-fail').center();
-			
-	$(window).scroll(function() { 
-		$('#of-popup-save').center();
-		$('#of-popup-reset').center();
-		$('#of-popup-fail').center();
-	});
-			
 
 	//Masked Inputs (images as radio buttons)
 	$('.of-radio-img-img').click(function(){
@@ -144,25 +96,6 @@ jQuery(document).ready(function($){
 	$('.of-radio-tile-img').show();
 	$('.of-radio-tile-radio').hide();
 
-	// Style Select
-	(function ($) {
-	styleSelect = {
-		init: function () {
-		$('.select_wrapper').each(function () {
-			$(this).prepend('<span>' + $(this).find('.select option:selected').text() + '</span>');
-		});
-		$('.select').live('change', function () {
-			$(this).prev('span').replaceWith('<span>' + $(this).find('option:selected').text() + '</span>');
-		});
-		$('.select').bind($.browser.msie ? 'click' : 'change', function(event) {
-			$(this).prev('span').replaceWith('<span>' + $(this).find('option:selected').text() + '</span>');
-		}); 
-		}
-	};
-	$(document).ready(function () {
-		styleSelect.init()
-	})
-	})(jQuery);
 	
 	
 	/** Aquagraphite Slider MOD */

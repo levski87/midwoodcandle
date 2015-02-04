@@ -8,9 +8,16 @@
 global $flatsome_opt;
 ?>
 
+
 </div><!-- #main-content -->
 
-<footer class="footer-wrapper" role="contentinfo">
+
+<footer class="footer-wrapper" role="contentinfo">	
+<?php if(isset($flatsome_opt['html_before_footer'])){
+	// BEFORE FOOTER HTML BLOCK
+	echo do_shortcode($flatsome_opt['html_before_footer']);
+} ?>
+
 
 <!-- FOOTER 1 -->
 <?php if ( is_active_sidebar( 'sidebar-footer-1' ) ) : ?>
@@ -20,12 +27,6 @@ global $flatsome_opt;
 	</div><!-- end row -->
 </div><!-- end footer 1 -->
 <?php endif; ?>
-
-
-<?php if(isset($flatsome_opt['html_before_footer'])){
-	// BEFORE FOOTER HTML BLOCK
-	echo do_shortcode($flatsome_opt['html_before_footer']);
-} ?>
 
 
 <!-- FOOTER 2 -->
@@ -73,11 +74,13 @@ global $flatsome_opt;
 <!-- back to top -->
 <a href="#top" id="top-link"><span class="icon-angle-up"></span></a>
 
+<!-- mobile helper -->
+<div class="mob-helper"></div>
+
 <?php if(isset($flatsome_opt['html_scripts_footer'])){
 	// Insert footer scripts
 	echo $flatsome_opt['html_scripts_footer'];
 } ?>
-
 
 <?php wp_footer(); ?>
 

@@ -10,7 +10,7 @@
 //  - Next / Prev navigation on product pages
 //  - Blog - Add "Read more" links
 //  - Product Quick View
-//  - Catalog Mode (1.3)
+//  - Catalog Mode
 
 global $flatsome_opt;
 
@@ -243,7 +243,7 @@ function flatsome_add_to_cart_dropdown( $fragments ) {
 	?>
 	<div class="cart-inner">
 	<a href="<?php echo esc_url( $woocommerce->cart->get_cart_url() ); ?>" class="cart-link">
-					<strong class="cart-name hide-for-small"><?php _e('Cart', 'flatsome'); ?></strong> 
+                    <strong class="cart-name hide-for-small"><?php _e('Cart', 'woocommerce'); ?></strong> 
 					<span class="cart-price hide-for-small">/ <?php echo $woocommerce->cart->get_cart_total(); ?></span> 
                         
 					<!-- cart icon -->
@@ -281,7 +281,7 @@ function flatsome_add_to_cart_dropdown( $fragments ) {
 
                                       		?></div>
                                       		<div class="small-3 large-3 columns">
-                                      			<?php   echo '<a class="cart_list_product_img" href="'.get_permalink($cart_item['product_id']).'">' . $_product->get_image().'</a>';                                                    ?>
+                                                <?php  echo '<a class="cart_list_product_img" href="'.get_permalink($cart_item['product_id']).'">' . str_replace( array( 'http:', 'https:' ), '', $_product->get_image() ).'</a>'; ?>
                                       		</div>
                                       	</div><!-- end row -->
 
@@ -293,12 +293,12 @@ function flatsome_add_to_cart_dropdown( $fragments ) {
                                 </div><!-- Cart list -->
                                             
                                     <div class="minicart_total_checkout">                                        
-                                        <?php _e('Cart Subtotal', 'woocommerce'); ?><span><?php echo $woocommerce->cart->get_cart_total(); ?></span>                                   
+                                        <?php _e('Cart Subtotal', 'woocommerce'); ?><span><?php echo $woocommerce->cart->get_cart_subtotal(  ); ?></span>                                   
                                     </div>
                                     
-                                    <a href="<?php echo esc_url( $woocommerce->cart->get_cart_url() ); ?>" class="button expand uppercase"><?php _e('View Cart', 'flatsome'); ?></a>   
+                                    <a href="<?php echo esc_url( $woocommerce->cart->get_cart_url() ); ?>" class="button expand uppercase"><?php _e('View Cart', 'woocommerce'); ?></a>   
                                     
-                                    <a href="<?php echo esc_url( $woocommerce->cart->get_checkout_url() ); ?>" class="button secondary expand uppercase"><?php _e('Proceed to Checkout', 'flatsome'); ?></a>
+                                    <a href="<?php echo esc_url( $woocommerce->cart->get_checkout_url() ); ?>" class="button secondary expand uppercase"><?php _e( 'Proceed to Checkout', 'woocommerce' ); ?></a>
                                     
                                     <?php                                        
                                     else: echo '<p class="empty">'.__('No products in the cart.','woocommerce').'</p>'; endif;                                    
@@ -340,7 +340,7 @@ function flatsome_add_to_cart_dropdown( $fragments ) {
             
                     $average = number_format($rating / $count, 2);
             
-                    echo '<a href="#tab-reviews" class="scroll-to-reviews"><div class="star-rating tip-top" data-tip="'.$count.' review(s)"><span style="width:'.($average*16).'px"><span itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating" class="rating"><span itemprop="ratingValue">'.$average.'</span><span itemprop="reviewCount" class="hidden">'.$count.'</span></span> '.__('out of 5', 'woocommerce').'</span></div></a>';
+                    echo '<a href="#tab-reviews" class="scroll-to-reviews"><div class="star-rating tip-top" title="'.$count.' review(s)"><span style="width:'.($average*16).'px"><span itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating" class="rating"><span itemprop="ratingValue">'.$average.'</span><span itemprop="reviewCount" class="hidden">'.$count.'</span></span> '.__('out of 5', 'woocommerce').'</span></div></a>';
 
                 }
                 
@@ -482,22 +482,9 @@ function flatsome_add_morelink_class( $link, $text )
 }
 add_action( 'the_content_more_link', 'flatsome_add_morelink_class', 10, 2 );
 
-
-
-/* PRODUCT QUICK VIEW  */
-add_action('wp_head', 'wpse83650_lazy_ajax', 0, 0);
-function wpse83650_lazy_ajax()
-{
-    ?>
-    <script type="text/javascript">
-    /* <![CDATA[ */
-    var ajaxurl = "<?php echo esc_js(admin_url('admin-ajax.php')); ?>";
-    /* ]]> */
-    </script>
-    <?php
-}
 add_action('wp_ajax_jck_quickview', 'jck_quickview');
 add_action('wp_ajax_nopriv_jck_quickview', 'jck_quickview');
+
 /** The Quickview Ajax Output **/
 function jck_quickview() {
     global $post, $product, $woocommerce;
@@ -561,29 +548,25 @@ if(isset($_GET["catalog-mode"]) || $flatsome_opt['catalog_mode']){
 /**
  * Edit $wp_query before it is being run.
  */
+
 function flatsome_pre_get_posts_action( $query ) {
     global $flatsome_opt;
+
+    $action = isset($_GET['action']) ? $_GET['action'] : '';
+    // Stop if searching from admin
+    if($action == 'woocommerce_json_search_products') {
+        return;
+    }
+
+    if($action == 'woocommerce_json_search_products_and_variations') {
+        return;
+    }
     // Include posts and pages in ajax search.
     if(defined('DOING_AJAX') && DOING_AJAX && !empty($query->query_vars['s']) && $flatsome_opt['search_result']) {
         $query->query_vars['post_type'] = array( $query->query_vars['post_type'], 'post', 'page' );
         $query->query_vars['meta_query'] = new WP_Meta_Query( array( 'relation' => 'OR', $query->query_vars['meta_query'] ) );
     }
 }
+
 add_action('pre_get_posts', 'flatsome_pre_get_posts_action');
 
-/**
- * Edit $wp_query results.
- */
-function flatsome_posts_results_filter( $posts, $query ) {
-    global $flatsome_opt;
-    // Exclude WooCommerce pages in ajax search.
-    if (defined('DOING_AJAX') && DOING_AJAX && !empty($query->query_vars['s']) && $flatsome_opt['search_result']) {
-        foreach ($posts as $key => $post) {
-            foreach (array('myaccount', 'edit_address', 'change_password', 'lost_password', 'shop', 'cart', 'checkout', 'pay', 'view_order', 'thanks', 'terms') as $wc_page_type) {
-                if( $post->ID == woocommerce_get_page_id($wc_page_type) ) unset($posts[$key]);
-            }
-        }
-    }
-    return $posts;
-}
-add_filter( 'posts_results', 'flatsome_posts_results_filter', 10, 2 );

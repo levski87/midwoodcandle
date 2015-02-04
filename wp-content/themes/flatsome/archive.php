@@ -12,23 +12,24 @@ if(!isset($flatsome_opt['blog_layout'])){$flatsome_opt['blog_layout'] = '';}
 ?>
 
 <?php // ADD BLOG HEADER IF SET
-if(isset($flatsome_opt['blog_header'])){ echo do_shortcode($flatsome_opt['blog_header']);}
+if($flatsome_opt['blog_header']){ echo do_shortcode($flatsome_opt['blog_header']);}
 ?>
-<div class="page-wrapper page-<?php if($flatsome_opt['blog_layout']){ echo $flatsome_opt['blog_layout'];} else {echo 'right-sidebar';} ?>">
+<div class="page-wrapper <?php echo $flatsome_opt['blog_style']; ?> page-<?php if($flatsome_opt['blog_layout']){ echo $flatsome_opt['blog_layout'];} else {echo 'right-sidebar';} ?>">
 	<div class="row">
 
 		<?php if($flatsome_opt['blog_layout'] == 'left-sidebar') {
 		 	echo '<div id="content" class="large-9 right columns" role="main">';
 		 } else if($flatsome_opt['blog_layout'] == 'right-sidebar'){
 		 	echo '<div id="content" class="large-9 left columns" role="main">';
+		 } else if($flatsome_opt['blog_layout'] == 'no-sidebar' && $flatsome_opt['blog_style'] == 'blog-pinterest'){
+		 	echo '<div id="content" class="large-12 columns" role="main">';
 		 } else if($flatsome_opt['blog_layout'] == 'no-sidebar'){
-		 	echo '<div id="content" class="large-10 columns large-offset-1" role="main">';
+		 	echo '<div id="content" class="large-12 columns" role="main">';
 		 } else {
 		 	echo '<div id="content" class="large-9 left columns" role="main">';
 		 }
 		?>
 
-		<div class="page-inner">
 
 		<?php if ( have_posts() ) : ?>
 
@@ -102,6 +103,9 @@ if(isset($flatsome_opt['blog_header'])){ echo do_shortcode($flatsome_opt['blog_h
 				?>
 			</header><!-- .page-header -->
 
+
+	<div class="page-inner">
+
 			<?php /* Start the Loop */ ?>
 			<?php while ( have_posts() ) : the_post(); ?>
 
@@ -115,14 +119,18 @@ if(isset($flatsome_opt['blog_header'])){ echo do_shortcode($flatsome_opt['blog_h
 
 			<?php endwhile; ?>
 
-			<?php flatsome_content_nav( 'nav-below' ); ?>
 
 		<?php else : ?>
 
 			<?php get_template_part( 'no-results', 'archive' ); ?>
 
 		<?php endif; ?>
+
+		 <div class="large-12 columns navigation-container">
+			<?php flatsome_content_nav( 'nav-below' ); ?>
+		</div>
 	</div><!-- .page-inner -->
+
 	</div><!-- #content -->
 
 	<div class="large-3 columns left">
@@ -133,5 +141,21 @@ if(isset($flatsome_opt['blog_header'])){ echo do_shortcode($flatsome_opt['blog_h
 
 </div><!-- end row -->	
 </div><!-- end page-wrapper -->
+
+<?php if($flatsome_opt['blog_style'] == 'blog-pinterest'){ ?>
+  <script>
+	jQuery(document).ready(function ($) {
+	    imagesLoaded( document.querySelector('.page-inner'), function( instance, container ) {
+	    	var $container = $(".page-inner");
+		    // initialize
+		    $container.packery({
+		      itemSelector: ".columns",
+		      gutter: 0
+		    });
+  			$container.packery('layout');
+		});
+	 });
+  </script> 
+<?php } ?>
 
 <?php get_footer(); ?>

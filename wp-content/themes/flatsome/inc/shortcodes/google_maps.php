@@ -8,7 +8,9 @@ function shortcode_map($atts, $content=null, $code) {
     'long' => '',
     'height' => '400px',
 		'color' => '#58728a',
-    'zoom' => '17'
+    'zoom' => '17',
+    'controls' => 'false',
+    'pan' => 'false',
 	), $atts));
 	ob_start();
 	?> 
@@ -55,7 +57,7 @@ function shortcode_map($atts, $content=null, $code) {
       			streetViewControl: false,
       			overviewMapControl: false,
             scrollwheel: false,
-            disableDoubleClickZoom: false
+            disableDoubleClickZoom: true
         }
         var map = new google.maps.Map(document.getElementById("<?php echo $mapsrandomid; ?>"), myOptions);
         var styledMapType = new google.maps.StyledMapType(styles['flatsome'], {name: 'flatsome'});
@@ -82,7 +84,7 @@ function shortcode_map($atts, $content=null, $code) {
             <div class="row">
             <div class="large-4 columns right">
                 <div class="map_inner">
-                <?php echo do_shortcode($content); ?>
+                <?php echo fixShortcode($content); ?>
               </div> <!-- map_inner -->
             </div><!-- large-4 -->
              </div><!-- row -->

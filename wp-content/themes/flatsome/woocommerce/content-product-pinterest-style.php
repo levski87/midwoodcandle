@@ -17,7 +17,6 @@ global $product, $woocommerce_loop, $flatsome_opt;
 $rand = rand(0,50);
 ?>
 
-<li class="featured-product large-4 columns">
 <?php do_action( 'woocommerce_before_shop_loop_item' ); ?>
 <a href="<?php the_permalink(); ?>">
       <div class="product-image">
@@ -30,11 +29,11 @@ $rand = rand(0,50);
           <div class="tx-div small"></div>
           <?php do_action( 'woocommerce_after_shop_loop_item_title' ); ?>
         </div>
+      <?php if(!$flatsome_opt['disable_quick_view']){ ?>
         <div class="quick-view" data-prod="<?php echo $post->ID; ?>">+ <?php _e('Quick View','flatsome'); ?></div><!-- .quick-view -->
-      </div><!-- end product-image -->
+       <?php } ?>      </div><!-- end product-image -->
       <?php woocommerce_get_template( 'loop/sale-flash.php' ); ?>
 </a>      	
-        <?php if ( in_array( 'yith-woocommerce-wishlist/init.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) { ?>
-                       <?php echo do_shortcode('[yith_wcwl_add_to_wishlist]'); ?>
-       <?php } ?>
-</li><!-- end product -->
+<?php if ( in_array( 'yith-woocommerce-wishlist/init.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) { ?>
+      <?php echo do_shortcode('[yith_wcwl_add_to_wishlist]'); ?>
+<?php } ?>

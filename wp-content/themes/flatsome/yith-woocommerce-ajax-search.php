@@ -14,10 +14,10 @@ wp_enqueue_script('yith_wcas_jquery-autocomplete' );
 $rand_id = rand();
 ?>
 
-<div class="row collapse yith-ajaxsearchform-container <?php echo $rand_id; ?>_container">
+<div class="row collapse search-wrapper yith-ajaxsearchform-container <?php echo $rand_id; ?>_container">
 <form role="search" method="get" id="yith-ajaxsearchform" action="<?php echo esc_url( home_url( '/'  ) ) ?>">
       <div class="large-10 small-10 columns">
-        <input type="search" value="<?php echo get_search_query() ?>" name="s" id="<?php echo $rand_id; ?>_yith" placeholder="<?php echo get_option('yith_wcas_search_input_label') ?>" />
+        <input type="search" value="<?php echo get_search_query() ?>" name="s" id="<?php echo $rand_id; ?>_yith" placeholder="<?php echo _e('Search','woocommerce'); ?>&hellip;" />
       </div><!-- input -->
       <div class="large-2 small-2 columns">
         <button type="submit" id="yith-searchsubmit" class="button secondary postfix"><i class="icon-search"></i></button>
