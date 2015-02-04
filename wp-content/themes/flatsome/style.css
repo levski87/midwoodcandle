@@ -13,6 +13,11 @@ License URI:
 @import url("css/foundation.css?v=2.1");
 /*************** ADD CUSTOM CSS HERE  ***************/
 
+body {
+	color : #404040 !important;
+}
+
+
 
 @media only screen and (max-width: 48em) {
 /*************** ADD CUSTOM MOBILE CSS HERE  ***************/
