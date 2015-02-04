@@ -3,12 +3,13 @@
 Contributors: yithemes
 Tags: wishlist, woocommerce, products, themes, yit, e-commerce, shop
 Requires at least: 3.5.1
-Tested up to: 3.5.1
-Stable tag: 1.0.3
+Tested up to: 4.1
+Stable tag: 1.1.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 YITH WooCommerce Wishlist add all Wishlist features to your website. Needs WooCommerce to work.
+WooCommerce 2.2.x compatible.
 
 
 == Description ==
@@ -19,11 +20,11 @@ afterwards add them to the cart or remove them.
 
 Working demo are available:
 
-**[LIVE DEMO 1](http://demo.yithemes.com/room09/product/africa-style/)** - **[LIVE DEMO 2](http://demo.yithemes.com/bazar/shop/ankle-shoes/)**
+**[LIVE DEMO 1](http://preview.yithemes.com/room09/product/africa-style/)** - **[LIVE DEMO 2](http://preview.yithemes.com/bazar/shop/ankle-shoes/)**
 
+Full documentation is available [here](http://yithemes.com/docs-plugins/yith_woocommerce_wishlist).
 
-Full documentation is available [here](http://yithemes.com/docs-plugins/yith_wishlist/).
-
+This plugin is 100% compatible with [WPML](http://wpml.org/?aid=24889&affiliate_key=Qn1wDeBNTcZV)
 
 = Installation =
 
@@ -35,7 +36,7 @@ YITH WooCommerce Wishlist will add a new tab called "Wishlist" below the Woocomm
 
 = Developer =
 
-Are you a developer? Want to customize the templates or the style of the plugin? Read on the [documentation](http://yithemes.com/docs-plugins/yith_wishlist/) and discover how to do that.
+Are you a developer? Want to customize the templates or the style of the plugin? Read on the [documentation](http://yithemes.com/docs-plugins/yith_woocommerce_wishlist/) and discover how to do that. 
 
 = Support =
 
@@ -74,6 +75,72 @@ Yes, you can change the colors of background, text and border or apply a custom 
 
 == Changelog ==
 
+= 1.1.7 =
+* Added: Support to WooCommerce Endpoints (@use yit_wcwl_add_to_cart_redirect_url filter)
+* Add filter to shortcode html
+* Add title to share
+
+= 1.1.6 =
+
+* Updated: Plugin Core Framework
+* Update: Languages file
+* Tweek: WPML Support Improved
+
+= 1.1.5 =
+
+* Added: Share wishlist by email 
+
+= 1.1.4 =
+
+* Fixed: wrong string for inline js on remove link
+* Fixed: wrong string for inline js on add to cart link
+
+= 1.1.3 =
+
+* Added: Options Tabs Filter
+* Fixed: Various Bugs
+
+= 1.1.2 =
+
+* Fixed: Warnings when Show Stock Status is disabled
+* Fixed: Restored page options on WooCommerce 2.1.x
+
+= 1.1.1 =
+
+* Fixed: Inability to unistall plugin 
+* Fixed: Redirect to cart page from wishlist page
+
+= 1.1.0 =
+
+* Added: Support to WooCommerce 2.1.x
+* Added: Spanish (Mexico) translation by Gabriel Dzul
+* Added: French translation by Virginie Garcin
+* Fixed: Revision Italian Language po/mo files
+
+= 1.0.6 =
+
+* Added: Spanish (Argentina) partial translation by Sebastian Jeremias
+* Added: Portuguese (Brazil) translation by Lincoln Lemos
+* Fixed: Share buttons show also when not logged in
+* Fixed: Price shows including or excluding tax based on WooCommerce settings
+* Fixed: Better compatibility for WPML 
+* Fixed: Price shows "Free!" if the product is without price
+* Fixed: DB Table creation on plugin activation
+
+= 1.0.5 =
+
+* Added: Shared wishlists can be seens also by not logged in users
+* Added: Support for WPML String translation
+* Updated: German translation by Stephanie Schlieske
+* Fixed: Add to cart button does not appear if the product is out of stock
+
+= 1.0.4 =
+
+* Added: partial Ukrainian translation
+* Added: complete German translation. Thanks to Stephanie Schliesk
+* Added: options to show/hide button add to cart, unit price and stock status in the wishlist page
+* Added: Hebrew language (thanks to Gery Grinvald)
+
 = 1.0.3 =
 
 * Minor bugs fixes
@@ -106,7 +173,7 @@ If you have created your own language pack, or have an update for an existing on
 
 == Documentation ==
 
-Full documentation is available [here](http://yithemes.com/docs-plugins/yith_wishlist/).
+Full documentation is available [here](http://yithemes.com/docs-plugins/yith_woocommerce_wishlist).
 
 == Upgrade notice ==
 

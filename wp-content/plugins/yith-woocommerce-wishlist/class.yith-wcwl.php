@@ -4,7 +4,7 @@
  *
  * @author Your Inspiration Themes
  * @package YITH WooCommerce Wishlist
- * @version 1.0.0
+ * @version 1.1.5
  */
 
 if ( !defined( 'YITH_WCWL' ) ) { exit; } // Exit if accessed directly
@@ -245,6 +245,7 @@ if( !class_exists( 'YITH_WCWL' ) ) {
          * @since 1.0.0
          */
         public function get_wishlist_url() {
+
             return get_permalink( get_option( 'yith_wcwl_wishlist_page_id' ) );
         }
         
