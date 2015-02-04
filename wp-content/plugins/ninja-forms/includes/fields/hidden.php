@@ -1,7 +1,7 @@
 <?php
 function ninja_forms_register_field_hiddenbox(){
 	$args = array(
-		'name' => 'Hidden Field',
+		'name' => __( 'Hidden Field' , 'ninja-forms' ),
 		'sidebar' => 'template_fields',
 		'edit_function' => 'ninja_forms_field_hidden_edit',
 		'display_function' => 'ninja_forms_field_hidden_display',
@@ -20,13 +20,14 @@ function ninja_forms_register_field_hiddenbox(){
 			),
 			'action' => array(
 				'change_value' => array(
-					'name' => 'Change Value',
+					'name'        => __( 'Change Value', 'ninja-forms' ),
 					'js_function' => 'change_value',
-					'output' => 'text',
+					'output'      => 'text',
 				),
 			),
 		),
 		'display_label' => false,
+		'sub_edit_function' => 'ninja_forms_field_hidden_edit_sub',
 	);
 
 	ninja_forms_register_field('_hidden', $args);
@@ -35,7 +36,6 @@ function ninja_forms_register_field_hiddenbox(){
 add_action('init', 'ninja_forms_register_field_hiddenbox');
 
 function ninja_forms_field_hidden_edit($field_id, $data){
-
 	$custom = '';
 	// Default Value
 	if(isset($data['default_value'])){
@@ -48,14 +48,17 @@ function ninja_forms_field_hidden_edit($field_id, $data){
 	<p class="description description-thin">
 		<label for="">
 			<?php _e( 'Default Value' , 'ninja-forms'); ?><br />
-			<select id="default_value_<?php echo $field_id;?>" name="" class="widefat ninja-forms-hidden-default-value" rel="<?php echo $field_id;?>">
-				<option value="" <?php if($default_value == 'none' OR $default_value == ''){ echo 'selected'; $custom = 'no';}?>><?php _e('None', 'ninja-forms'); ?></option>
+			<select id="default_value_<?php echo $field_id;?>" name="" class="widefat ninja-forms-_text-default-value" rel="<?php echo $field_id;?>">
+				<option value="" <?php if( $default_value == ''){ echo 'selected'; $custom = 'no';}?>><?php _e('None', 'ninja-forms'); ?></option>
 				<option value="_user_id" <?php if($default_value == '_user_id'){ echo 'selected'; $custom = 'no';}?>><?php _e('User ID (If logged in)', 'ninja-forms'); ?></option>
-				<option value="user_firstname" <?php if($default_value == 'user_firstname'){ echo 'selected'; $custom = 'no';}?>><?php _e('User Firstname (If logged in)', 'ninja-forms'); ?></option>
-				<option value="user_lastname" <?php if($default_value == 'user_lastname'){ echo 'selected'; $custom = 'no';}?>><?php _e('User Lastname (If logged in)', 'ninja-forms'); ?></option>
+				<option value="_user_firstname" <?php if($default_value == '_user_firstname'){ echo 'selected'; $custom = 'no';}?>><?php _e('User Firstname (If logged in)', 'ninja-forms'); ?></option>
+				<option value="_user_lastname" <?php if($default_value == '_user_lastname'){ echo 'selected'; $custom = 'no';}?>><?php _e('User Lastname (If logged in)', 'ninja-forms'); ?></option>
 				<option value="_user_display_name" <?php if($default_value == '_user_display_name'){ echo 'selected'; $custom = 'no';}?>><?php _e('User Display Name (If logged in)', 'ninja-forms'); ?></option>
-				<option value="user_email" <?php if($default_value == 'user_email'){ echo 'selected'; $custom = 'no';}?>><?php _e('User Email (If logged in)', 'ninja-forms'); ?></option>
-				<option value="custom" <?php if($custom != 'no'){ echo 'selected';}?>><?php _e('Custom', 'ninja-forms'); ?> -></option>
+				<option value="_user_email" <?php if($default_value == '_user_email'){ echo 'selected'; $custom = 'no';}?>><?php _e('User Email (If logged in)', 'ninja-forms'); ?></option>
+				<option value="post_id" <?php if($default_value == 'post_id'){ echo 'selected'; $custom = 'no';}?>><?php _e('Post / Page ID (If available)', 'ninja-forms'); ?></option>
+				<option value="post_title" <?php if($default_value == 'post_title'){ echo 'selected'; $custom = 'no';}?>><?php _e('Post / Page Title (If available)', 'ninja-forms'); ?></option>
+				<option value="post_url" <?php if($default_value == 'post_url'){ echo 'selected'; $custom = 'no';}?>><?php _e('Post / Page URL (If available)', 'ninja-forms'); ?></option>
+				<option value="_custom" <?php if($custom != 'no'){ echo 'selected';}?>><?php _e('Custom', 'ninja-forms'); ?> -></option>
 			</select>
 		</label>
 	</p>
@@ -87,9 +90,9 @@ function ninja_forms_field_hidden_edit($field_id, $data){
 			<input type="checkbox" value="1" name="ninja_forms_field_<?php echo $field_id;?>[email]" id="ninja_forms_field_<?php echo $field_id;?>_email" class="ninja-forms-hidden-email" <?php if($email == 1){ echo "checked";}?>>
 		</label>
 		<a href="#" class="tooltip">
-		    <img id="" class='ninja-forms-help-text' src="<?php echo NINJA_FORMS_URL;?>/images/question-ico.gif" title="">
+		    <img id="" class='ninja-forms-help-text' src="<?php echo NINJA_FORMS_URL;?>images/question-ico.gif" title="">
 		    <span>
-		        <img class="callout" src="<?php echo NINJA_FORMS_URL;?>/images/callout.gif" />
+		        <img class="callout" src="<?php echo NINJA_FORMS_URL;?>images/callout.gif" />
 		        <?php _e( 'If this box is checked, Ninja Forms will validate this input as an email address.', 'ninja-forms' );?>
 		    </span>
 		</a>
@@ -102,7 +105,7 @@ function ninja_forms_field_hidden_edit($field_id, $data){
 			<input type="checkbox" value="1" name="ninja_forms_field_<?php echo $field_id;?>[send_email]" id="ninja_forms_field_<?php echo $field_id;?>_send_email" class="ninja-forms-hidden-send-email" <?php if($send_email == 1){ echo "checked";}?>>
 			</label>
 			<a href="#" class="tooltip">
-			    <img id="" class='ninja-forms-help-text' src="<?php echo NINJA_FORMS_URL;?>/images/question-ico.gif" title="">
+			    <img id="" class='ninja-forms-help-text' src="<?php echo NINJA_FORMS_URL;?>images/question-ico.gif" title="">
 			    <span>
 			        <img class="callout" src="<?php echo NINJA_FORMS_URL;?>/images/callout.gif" />
 			        <?php _e( 'If this box is checked, Ninja Forms will send a copy of this form (and any messages attached) to this address.', 'ninja-forms' ); ?>
@@ -113,43 +116,38 @@ function ninja_forms_field_hidden_edit($field_id, $data){
 	<?php
 }
 
-function ninja_forms_field_hidden_display($field_id, $data){
+function ninja_forms_field_hidden_display( $field_id, $data, $form_id = '' ){
 	global $current_user;
 
-	$field_class = ninja_forms_get_field_class($field_id);
+	$field_class = ninja_forms_get_field_class( $field_id, $form_id );
 	if(isset($data['default_value'])){
 		$default_value = $data['default_value'];
 	}else{
 		$default_value = '';
 	}
 
-	get_currentuserinfo();
-	$user_ID = $current_user->ID;
-	$user_firstname = $current_user->user_firstname;
-    $user_lastname = $current_user->user_lastname;
-    $user_display_name = $current_user->display_name;
-    $user_email = $current_user->user_email;
-
-	switch( $default_value ){
-		case '_user_id':
-			$default_value = $user_ID;
-			break;
-		case 'user_firstname':
-			$default_value = $user_firstname;
-			break;
-		case 'user_lastname':
-			$default_value = $user_lastname;
-			break;
-		case '_user_display_name':
-			$default_value = $user_display_name;
-			break;
-		case 'user_email':
-			$default_value = $user_email;
-			break;
-	}
-
 	?>
 	<input id="ninja_forms_field_<?php echo $field_id;?>" name="ninja_forms_field_<?php echo $field_id;?>" type="hidden" class="<?php echo $field_class;?>" value="<?php echo $default_value;?>" rel="<?php echo $field_id;?>" />
 	<?php
 
+}
+
+function ninja_forms_field_hidden_edit_sub( $field_id, $data ) {
+	if(isset($data['default_value'])){
+		$default_value = $data['default_value'];
+	}else{
+		$default_value = '';
+	}
+
+	if(isset($data['label'])){
+		$label = $data['label'];
+	}else{
+		$label = '';
+	}
+	?>
+	<label>
+		<?php echo $label; ?>
+	</label>
+	<input id="ninja_forms_field_<?php echo $field_id;?>" name="ninja_forms_field_<?php echo $field_id;?>" type="text" class="<?php echo $field_class;?>" value="<?php echo $default_value;?>" rel="<?php echo $field_id;?>" />
+	<?php
 }

@@ -1,56 +1,57 @@
 <?php
 function ninja_forms_register_field_checkbox(){
 	$args = array(
-		'name' => 'Checkbox',
+		'name' => __( 'Checkbox', 'ninja-forms' ),
 		'edit_options' => array(
 			array(
-				'type' => 'select', //What type of input should this be?
+				'type'    => 'select', //What type of input should this be?
 				'options' => array(
 					array(
-						'name' => 'Unchecked',
+						'name'  => __( 'Unchecked', 'ninja-forms' ),
 						'value' => 'unchecked',
 					),
 					array(
-						'name' => 'Checked',
+						'name'  => __( 'Checked', 'ninja-forms' ),
 						'value' => 'checked',
 					),
 				),
 				'name' => 'default_value', //What should it be named. This should always be a programmatic name, not a label.
-				'label' => __('Default Value', 'ninja-forms'),
+				'label' => __( 'Default Value', 'ninja-forms' ),
 				'class' => 'widefat', //Additional classes to be added to the input element.
 			),
 		),
 		//'edit_function' => 'ninja_forms_field_checkbox_edit',
-		'display_function' => 'ninja_forms_field_checkbox_display',
-		'group' => 'standard_fields',
-		'edit_label' => true,
-		'edit_label_pos' => true,
+		'display_function'  => 'ninja_forms_field_checkbox_display',
+		'group'             => 'standard_fields',
+		'edit_label'        => true,
+		'edit_label_pos'    => true,
 		'label_pos_options' => array(
-			array('name' => 'Left of Element', 'value' => 'left'),
-			array('name' => 'Above Element', 'value' => 'above'),
-			array('name' => 'Below Element', 'value' => 'below'),
-			array('name' => 'Right of Element', 'value' => 'right'),
+			array('name' => __( 'Left of Element', 'ninja-forms' ), 'value' => 'left'),
+			array('name' => __( 'Above Element', 'ninja-forms' ), 'value' => 'above'),
+			array('name' => __( 'Below Element', 'ninja-forms' ), 'value' => 'below'),
+			array('name' => __( 'Right of Element', 'ninja-forms' ), 'value' => 'right'),
 		),
 		'edit_req' => true,
 		'edit_custom_class' => true,
 		'edit_help' => true,
+		'edit_desc' => true,
 		'edit_meta' => false,
 		'sidebar' => 'template_fields',
 		'edit_conditional' => true,
 		'conditional' => array(
 			'action' => array(
 				'show' => array(
-					'name' => 'Show This',
+					'name' => __( 'Show This', 'ninja-forms' ),
 					'js_function' => 'show',
 					'output' => 'show',
 				),
 				'hide' => array(
-					'name' => 'Hide This',
+					'name' => __( 'Hide This', 'ninja-forms' ),
 					'js_function' => 'hide',
 					'output' => 'hide',
 				),
 				'change_value' => array(
-					'name' => 'Change Value',
+					'name' => __( 'Change Value', 'ninja-forms' ),
 					'output' => 'select',
 					'options' => array(
 						'Checked' => 'checked',
@@ -69,9 +70,8 @@ function ninja_forms_register_field_checkbox(){
 				),
 			),
 		),
-		//'process' => 'ninja_forms_field_checkbox_pre_process',
-		//'edit_sub_pre_process' => 'ninja_forms_field_checkbox_pre_process',
 		'req_validation' => 'ninja_forms_field_checkbox_validation',
+		'edit_sub_value' => 'nf_field_checkbox_edit_sub_value',
 	);
 
 	ninja_forms_register_field('_checkbox', $args);
@@ -81,9 +81,9 @@ function ninja_forms_register_field_checkbox(){
 add_action('init', 'ninja_forms_register_field_checkbox');
 
 //Checkbox Display Function
-function ninja_forms_field_checkbox_display($field_id, $data){
+function ninja_forms_field_checkbox_display( $field_id, $data, $form_id = '' ){
 
-	$field_class = ninja_forms_get_field_class($field_id);
+	$field_class = ninja_forms_get_field_class( $field_id, $form_id );
 	$default_value = $data['default_value'];
 	if($default_value == 'checked' OR $default_value == 1){
 		$checked = 'checked = "checked"';
@@ -119,4 +119,24 @@ function ninja_forms_field_checkbox_validation( $field_id, $user_value ){
 	}else{
 		return false;
 	}
+}
+
+/**
+ * Edit submission value output function
+ *
+ * @since 2.7
+ * @return void
+ */
+function nf_field_checkbox_edit_sub_value( $field_id, $user_value ) {
+	
+	if ( $user_value == 'checked' ) {
+		$checked = 'checked="checked"';
+	} else {
+		$checked = '';
+	}
+
+	?>
+	<input type="hidden" name="fields[<?php echo $field_id; ?>]" value="unchecked">
+	<input type="checkbox" name="fields[<?php echo $field_id; ?>]" value="checked" <?php echo $checked; ?>>
+	<?php
 }

@@ -1,35 +1,39 @@
 <?php
 
 function ninja_forms_sidebar_sorter($array, $sequence){
-  $tmp = array();
-  foreach($sequence as $s){
-    foreach($array as $key => $a){
-      if($key == $s){
-        $tmp[$key] = $a;
-        unset( $array[$key] );
-        break;
-      }
-    }
-  }
-  if( is_array( $array ) AND !empty( $array ) ){
-  	  foreach( $array as $key => $a ){
-  	  	$tmp[$key] = $a;
-  	}
-  }
+	$tmp = array();
+	foreach($sequence as $s){
+	    foreach($array as $key => $a){
+			$s = str_replace( 'ninja_forms_metabox_', '', $s );
+			if($key == $s){
+				$tmp[$key] = $a;
+				unset( $array[$key] );
+				break;
+			}
+		}
+	}
+	if( is_array( $array ) AND !empty( $array ) ){
+		foreach( $array as $key => $a ){
+			$tmp[$key] = $a;
+		}
+	}
 
-  return $tmp;
+	return $tmp;
 }
 
 function ninja_forms_display_sidebars($data){
 	global $ninja_forms_sidebars;
 	$current_tab = ninja_forms_get_current_tab();
-	$current_page = $_REQUEST['page'];
-	$opt = get_option('ninja_forms_settings');
+	$current_page = esc_html( $_REQUEST['page'] );
+	$opt = nf_get_settings();
 	if( isset( $opt['sidebars'][$current_page][$current_tab] ) ){
 		$order = $opt['sidebars'][$current_page][$current_tab];
+		if ( !is_array ( $order ) ) {
+			$order = array();
+		}
 		$ninja_forms_sidebars[$current_page][$current_tab] = ninja_forms_sidebar_sorter( $ninja_forms_sidebars[$current_page][$current_tab], $order );
 	}
-	$plugin_settings = get_option( 'ninja_forms_settings' );
+	$plugin_settings = nf_get_settings();
 ?>
 <div id="menu-settings-column" class="metabox-holder">
 	<div id="side-sortables" class="meta-box-sortables ui-sortable">
@@ -38,7 +42,7 @@ function ninja_forms_display_sidebars($data){
 			foreach($ninja_forms_sidebars[$current_page][$current_tab] as $slug => $sidebar){
 
 				if((isset($opt['screen_options']['tab'][$current_tab]['sidebars'][$slug]['visible']) AND $opt['screen_options']['tab'][$current_tab]['sidebars'][$slug]['visible'] == 1) OR !isset($opt['screen_options']['tab'][$current_tab]['sidebars'][$slug]['visible'])){
-				
+
 				if ( isset ( $plugin_settings['metabox_state'][$current_page][$current_tab][$slug] ) ) {
 					$state = $plugin_settings['metabox_state'][$current_page][$current_tab][$slug];
 				} else {
@@ -106,7 +110,6 @@ function ninja_forms_display_sidebars($data){
 								case 'radio':
 									?>
 									<label for="<?php echo $name;?>"><?php _e($option['label'], 'ninja-forms');?></label>
-									<br>
 									<?php
 									if(isset($option['options'])){
 											$x = 0;
@@ -114,7 +117,6 @@ function ninja_forms_display_sidebars($data){
 												?>
 												<input type="radio" id="<?php echo $name.'_'.$x;?>" value="<?php echo $option['value'];?>" <?php checked($option['value'], $value);?> name="<?php echo $name;?>">
 												<label for="<?php echo $name.'_'.$x;?>"><?php echo $option['name'];?></label>
-												<br>
 												<?php
 												$x++;
 											}
@@ -145,7 +147,6 @@ function ninja_forms_display_sidebars($data){
 								case 'textarea':
 									?>
 									<label for="<?php echo $name;?>"><?php _e($option['label'], 'ninja-forms');?></label>
-									<br>
 									<textarea name="<?php echo $name;?>" id="<?php echo $name;?>"><?php echo $value;?></textarea>
 									<?php
 									break;
@@ -158,7 +159,7 @@ function ninja_forms_display_sidebars($data){
 							if(isset($option['help']) AND !empty($option['help'])){
 								?>
 								<a href="#" class="tooltip">
-								    <img id="" class='ninja-forms-help-text' src="<?php echo NINJA_FORMS_URL;?>/images/question-ico.gif" title="">
+								    <img id="" class='ninja-forms-help-text' src="<?php echo NINJA_FORMS_URL;?>images/question-ico.gif" title="">
 								    <span>
 								        <img class="callout" src="<?php echo NINJA_FORMS_URL;?>/images/callout.gif" />
 								        <?php _e($option['help'], 'ninja-forms');?>
@@ -180,7 +181,6 @@ function ninja_forms_display_sidebars($data){
 				}
 				?>
 			</div>
-			<br />
 
 		</div>
 		<?php

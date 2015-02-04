@@ -1,16 +1,11 @@
 jQuery(document).ready(function(jQuery) {
-	// Initiate our response function list variable.
-	window['ninja_forms_response_function_list'] = {};
-
-	// Initiate our beforeSubmit function list variable.
-	window['ninja_forms_before_submit_function_list'] = {};
 
 	// Prevent the enter key from submitting the form.
 	jQuery(".ninja-forms-form input").bind("keypress", function(e) {
 		if (e.keyCode == 13) {
 			var type = jQuery(this).attr("type");
 			if( type != "textarea" ){
-				return false;
+				// return false;
 			}
 		}
 	});
@@ -33,21 +28,26 @@ jQuery(document).ready(function(jQuery) {
 
 	if( jQuery.fn.mask ){
 		jQuery(".ninja-forms-mask").each(function(){
-			var mask = this.title;
+			var mask = jQuery(this).data('mask');
+			mask = mask.toString();
 			jQuery(this).mask(mask);
 		});
 
-		jQuery(".ninja-forms-date").mask('99/99/9999');
+		var date_format_mask = ninja_forms_settings.date_format;
+		date_format_mask = date_format_mask.replace( /m/g, 9 );
+		date_format_mask = date_format_mask.replace( /d/g, 9 );
+		date_format_mask = date_format_mask.replace( /y/g, 99 );
+		date_format_mask = date_format_mask.replace( /Y/g, 9999 );
+
+		jQuery(".ninja-forms-date").mask(date_format_mask);
 	}
 
 	if( jQuery.fn.datepicker ){
-		jQuery(".ninja-forms-datepicker").datepicker({
-			dateFormat: ninja_forms_settings.date_format
-		});
+		jQuery(".ninja-forms-datepicker").datepicker( ninja_forms_settings.datepicker_args );
 	}
 
 	if( jQuery.fn.autoNumeric ){
-		jQuery(".ninja-forms-currency").autoNumeric({aSign: ninja_forms_settings.currency_symbol});
+		jQuery(".ninja-forms-currency").autoNumeric({aSign: ninja_forms_settings.currency_symbol, aSep: thousandsSeparator, aDec: decimalPoint});
 	}
 
 	/* * * End Mask JS * * */
@@ -64,12 +64,26 @@ jQuery(document).ready(function(jQuery) {
 
 	/* * * End Help Hover JS * * */
 
+	/* * * Begin Character/Word Limit JS * * */
+
+	jQuery(".input-limit").each(function() {
+		var input_limit = jQuery(this).data( 'input-limit' );
+		var input_limit_type = jQuery(this).data( 'input-limit-type' );
+		var input_limit_msg = jQuery(this).data( 'input-limit-msg' );
+		jQuery(this).counter( {
+		    count: 'down',
+		    goal: input_limit,
+		    type: input_limit_type,
+		    msg: input_limit_msg
+		} );
+
+	});
 
 	/* * * Begin ajaxForms JS * * */
 
-	/* 
+	/*
 	 * Attaching events to these elements can allow devs to mimic a priority system for event firing.
-	 * Priority is handled by the element that the event handlers are attached to: 
+	 * Priority is handled by the element that the event handlers are attached to:
 	 * 1) Event handlers attached to the form itself will be fired first.
 	 * 2) Event handlers attached to the 'body' element will be fired second.
 	 * 3) Event handlers attached to the document element will be fired last.
@@ -88,7 +102,7 @@ jQuery(document).ready(function(jQuery) {
 	jQuery('body').on('beforeSubmit.example', function(e, formData, jqForm, options ){
 		alert('hello world');
 		return true;
-	});	
+	});
 
 	jQuery(document).on('beforeSubmit.example', function(e, formData, jqForm, options ){
 		alert('world');
@@ -104,12 +118,21 @@ jQuery(document).ready(function(jQuery) {
 	jQuery(".ninja-forms-form").each(function(){
 		var form_id = this.id.replace("ninja_forms_form_", "");
 		var settings = window['ninja_forms_form_' + form_id + '_settings'];
-		ajax = settings.ajax
+		if ( typeof settings != 'undefined' ) {
+			ajax = settings.ajax
+		} else {
+			ajax = 0;
+		}
+		
 		if(ajax == 1){
 			var options = {
+            beforeSerialize: function($form, add_product_form_options) {
+            	if ( typeof tinyMCE !== 'undefined' ) {
+            		tinyMCE.triggerSave();
+            	}
+            },
 			beforeSubmit:  ninja_forms_before_submit,
 			success:       ninja_forms_response,
-			//url: 		   'http://demo.wpninjas.com/ninja-forms/wp-admin/admin-ajax.php'
 			dataType: 'json'
 			};
 			jQuery(this).ajaxForm(options);
@@ -135,7 +158,7 @@ jQuery(document).ready(function(jQuery) {
 
 	/* * * End ajaxForm JS * * */
 
-	/* 
+	/*
 	 * Password Field JS
 	 */
 
@@ -153,43 +176,104 @@ jQuery(document).ready(function(jQuery) {
 	});
 
 	/*
+	 * Timer field JS
+	 */
+	var countdown = {};
+	jQuery('.countdown-timer').each(function( index ) {
+
+		jQuery(this).attr('disabled', 'disabled').prev('input.no-js').remove();
+		id = jQuery(this).attr('id');
+		countdown.index = window.setInterval(function(){ninja_forms_countdown(id, index)},1000);
+
+	});
+
+	function ninja_forms_countdown( id, index ){
+		$countdown = jQuery('#' + id );
+		counter = parseInt($countdown.data('countdown')) - 1;
+
+		$countdown.val(counter).data('countdown', counter ).find('span').html(counter);
+
+		if( counter <= 0 ) {
+			window.clearInterval(countdown.index);
+			$countdown.removeAttr('disabled').html($countdown.data('text') );
+		}
+	}
+
+	/*
 	 * Calculation Field JS
 	 */
 
-	// Listen to the input elements with our calculation class for focus.
-	jQuery('body').on( 'focus', '.ninja-forms-field-calc-listen', function(e){
-		jQuery(this).data( "oldValue", jQuery(this).val() );
-	});
+	var calc_fields = jQuery(".ninja-forms-field-calc-listen");
 
-	// Listen to the input elements with our calculation class for focus.
-	jQuery('body').on( 'mousedown', '.ninja-forms-field-calc-listen', function(e){
-		jQuery(this).data( "oldValue", jQuery(this).val() );
-	});	
+	calc_fields.each(function (i, element) {
 
-	// Listen to the input elements with our calculation class for focus.
-	jQuery('body').on( 'keydown', '.ninja-forms-field-calc-listen', function(e){
-		if( this.type == 'select-multiple' ) {
-			jQuery(this).data( "oldValue", jQuery(this).val() );
+		if ( this.type == 'checkbox' ) {
+			if ( this.checked ) {
+				var previousValue = 'checked';
+			} else {
+				var previousValue = 'unchecked';
+			}
+		} else {
+			if ( typeof this.type === 'undefined' ) {
+				var previousValue = jQuery(this).prop('innerHTML');
+
+			} else {
+				var previousValue = jQuery(this).val();
+			}
+		}
+
+		var form_id = ninja_forms_get_form_id( this );
+		var field_id = jQuery(this).attr("rel");
+		var calc_settings = window['ninja_forms_form_' + form_id + '_calc_settings'];
+
+		// Get our auto total field or fields.
+		for ( calc_id in calc_settings.calc_fields ) {
+			if ( calc_id != field_id ) {
+				jQuery(element).data(calc_id + "-oldValue", previousValue);
+			}
 		}
 	});
 
 	jQuery('body').on( 'focus', '.ninja-forms-field-list-options-span-calc-listen', function(e){
 		var field_id = jQuery(this).attr("rel");
-		jQuery(this).data("oldValue", jQuery("input[name='ninja_forms_field_" + field_id +"']:checked").val());
+		if ( jQuery("#ninja_forms_field_" + field_id + "_type").val() == 'list' && jQuery("#ninja_forms_field_" + field_id + "_list_type").val() == 'radio' ) {
+			var form_id = ninja_forms_get_form_id( this );
+			var calc_settings = window['ninja_forms_form_' + form_id + '_calc_settings'];
+
+			// Get our auto total field or fields.
+			for ( calc_id in calc_settings.calc_fields ) {
+				if ( calc_id != field_id ) {
+					jQuery(this).data(calc_id + "-oldValue", jQuery("input[name='ninja_forms_field_" + field_id +"']:checked").val());
+				}
+			}
+		}
 	});
 
 	jQuery('body').on( 'mousedown', '.ninja-forms-field-list-options-span-calc-listen', function(e){
 		var field_id = jQuery(this).attr("rel");
-		jQuery(this).data("oldValue", jQuery("input[name='ninja_forms_field_" + field_id +"']:checked").val());
+		if ( jQuery("#ninja_forms_field_" + field_id + "_type").val() == 'list' && jQuery("#ninja_forms_field_" + field_id + "_list_type").val() == 'radio' ) {
+			var form_id = ninja_forms_get_form_id( this );
+			var calc_settings = window['ninja_forms_form_' + form_id + '_calc_settings'];
+
+			// Get our auto total field or fields.
+			for ( calc_id in calc_settings.calc_fields ) {
+				if ( calc_id != field_id ) {
+					jQuery(this).data(calc_id + "-oldValue", jQuery("input[name='ninja_forms_field_" + field_id +"']:checked").val());
+				}
+			}
+		}
 	});
 
 	// Listen to the input elements for our auto-calculation fields and change the total.
 	jQuery('body').on( 'change', '.ninja-forms-field-calc-listen', function(event){
+
 		if ( this == event.target ) {
 			// Get our calc settings.
 			var form_id = ninja_forms_get_form_id( this );
 			var field_id = jQuery(this).attr("rel");
 			var calc_settings = window['ninja_forms_form_' + form_id + '_calc_settings'];
+			var visible = jQuery("#ninja_forms_field_" + field_id + "_div_wrap").data("visible");
+
 			// Get our auto total field or fields.
 
 			for ( calc_id in calc_settings.calc_fields ) {
@@ -215,31 +299,82 @@ jQuery(document).ready(function(jQuery) {
 									change = true;
 									break;
 								}
-							};					
+							};
 						}
 					}
 
 					if ( ( ( calc_method == 'fields' || calc_method == 'eq' ) && change ) || calc_method == 'auto' ) {
+
 						if ( calc_method == 'auto' || calc_method == 'fields' ) { // Method: auto or fields
 							// Loop through our calc fields and check to see if they are set to auto. If they are, perform the auto totalling actions.
 							var key = jQuery(this).val();
 							var new_value = '';
 							// Set our old_value to the previous one for this field.
-							old_value = jQuery(this).data('oldValue');
+							old_value = jQuery(this).data(calc_id + '-oldValue');
+
 							// Check to see if we are in a list field. If we are, we can grab the calc values.
 							if ( jQuery('#ninja_forms_field_' + field_id + '_type' ).val() == 'list' ) {
 								var key = jQuery(this).val();
-								// See if we have any old values. If we do, compare them to our current selectino for this field and see if we need to subtract anything.
+								// See if we have any old values. If we do, compare them to our current selection for this field and see if we need to subtract anything.
 								if ( jQuery('#ninja_forms_field_' + field_id + '_list_type').val() == 'checkbox' ) {
-									if ( !this.checked ) {
+
+									if ( this.checked ) {
+										jQuery(this).data(calc_id + '-oldValue', 'checked' );
+									} else {
+										jQuery(this).data(calc_id + '-oldValue', 'unchecked' );
+									}
+
+									if ( this.checked && visible == 1 ) {
+										// If this is checked AND visible, we don't want to do any old operations
+										old_value = 0;
+
+									} else if ( this.checked && visible != 1 ) {
+										// If this is checked AND hidden, we want to perform an old operation on it.
 										old_value = key;
 										new_value = 0;
+
+									} else if ( !this.checked && visible == 1 ) {
+										if ( old_value == 'checked' ) {
+											old_value = key;
+										} else {
+											old_value = 0;
+										}
+										new_value = 0;
+
+									} else if ( !this.checked && visible != 1 ) {
+										if ( old_value == 'checked' ) {
+											old_value = key;
+										} else {
+											old_value = 0;
+										}
+										new_value = 0;
+
 									}
 								} else if ( jQuery('#ninja_forms_field_' + field_id + '_list_type').val() == 'radio' ) {
 									// If this is a checkbox or a radio list, then we have to check the span parent for the oldValue.
 									var span = jQuery(this).parent().parent().parent().parent();
-									old_value = jQuery(span).data('oldValue');
-								} else if ( jQuery(jQuery('#ninja_forms_field_' + field_id + '_list_type').val() == 'multi' ) ) {
+									old_value = jQuery(span).data(calc_id + '-oldValue');
+									if ( typeof old_value === 'undefined' ) {
+										if ( this.checked ) {
+											old_value = jQuery(this).val();
+										}
+									}
+									if ( this.checked && visible == 1 ) {
+										if ( old_value == key ) {
+											old_value = 0;
+										}
+									} else if ( this.checked && visible != 1 ) {
+										new_value = 0;
+									} else if ( !this.checked ) {
+										old_value = 0;
+										new_value = 0;
+									}
+
+									if ( this.checked ) {
+										jQuery(span).data(calc_id + '-oldValue', key );
+									}
+
+								} else if ( jQuery('#ninja_forms_field_' + field_id + '_list_type').val() == 'multi' ) {
 									// This is a multi-select list. The value is in an array, so we need to add all the values together.
 									if ( jQuery.isArray( key ) ) {
 										var tmp = 0;
@@ -250,7 +385,7 @@ jQuery(document).ready(function(jQuery) {
 										};
 										new_value = tmp;
 									}
-									
+
 									if ( jQuery.isArray( old_value ) ) {
 										var tmp = 0;
 										for (var i = old_value.length - 1; i >= 0; i--) {
@@ -262,21 +397,40 @@ jQuery(document).ready(function(jQuery) {
 									}
 								} else {
 									// This is a select list, so we can just grab the oldValue from this field.
-									var old_value = jQuery(this).data('oldValue');
+									var old_value = jQuery(this).data(calc_id + '-oldValue');
 								}
 								// Check to see if we're in a checkbox field. If so, the key needs to be based on checked or unchecked, not value.
 							} else if ( jQuery('#ninja_forms_field_' + field_id + '_type').val() == 'checkbox' ) {
-								if ( this.checked ) {
+								if ( this.checked && visible == 1 ) {
 									// This field is checked, so set key to 'checked.'
 									var key = 'checked';
 									// Checkboxes only have two states, so if we are changing, the previous value must have been the opposite of this one.
-									var old_value = 'unchecked';
+									old_value = 'unchecked';
+								} else if( this.checked && visible != 1 ) {
+									var key = 'unchecked';
+									if ( jQuery(this).data(calc_id + '-oldValue') == 'checked' || typeof jQuery(this).data(calc_id + '-oldValue') === 'undefined' ){
+										old_value = 'checked';
+									} else {
+										old_value = 0;
+									}
+								} else if( !this.checked && visible != 1 ) {
+									var key = 'unchecked';
+									old_value = 0;
 								} else {
 									var key = 'unchecked';
-									var old_value = 'checked';
+									if ( jQuery(this).data(calc_id + '-oldValue') == 'checked' || typeof jQuery(this).data(calc_id + '-oldValue') === 'undefined' ){
+										old_value = 'checked';
+									} else {
+										old_value = 0;
+									}
 								}
-								
+							} else if ( jQuery('#ninja_forms_field_' + field_id + '_type').val() == 'calc' ) {
+								if ( key == '' ) {
+									key = jQuery('#ninja_forms_field_' + field_id).prop('innerHTML');
+								}
 							}
+
+
 
 							if ( new_value === '' ) {
 								if ( typeof calc_settings.calc_value[field_id] !== 'undefined' && typeof calc_settings.calc_value[field_id][key] !== 'undefined' ) {
@@ -284,13 +438,24 @@ jQuery(document).ready(function(jQuery) {
 									var new_value = calc_settings.calc_value[field_id][key];
 								} else {
 									// This field doesn't exist in the calc value object. It's either a textbox or similar element.
-									if ( isNaN( this.value ) ) {
-										var new_value = 0;
+									if ( typeof this.type === 'undefined' ) {
+										var new_value = this.innerHTML;
 									} else {
 										var new_value = this.value;
 									}
+
+									if ( typeof ninja_forms_settings.currency_symbol !== 'undefined' ) {
+										new_value = new_value.replace( ninja_forms_settings.currency_symbol, "" );
+										new_value = new_value.replace( /,/g, "" );
+									}
+
+									if ( isNaN( new_value ) ) {
+										new_value = 0;
+									}
 								}
 							}
+
+							//console.log(field_id + ':' + old_value);
 
 							// Check to see if our old_value exists in the calc_value JS object.
 							if ( typeof calc_settings.calc_value[field_id] !== 'undefined' && typeof calc_settings.calc_value[field_id][old_value] !== 'undefined' ) {
@@ -299,9 +464,17 @@ jQuery(document).ready(function(jQuery) {
 							} else {
 								// Our calc_value doesn't exist in the calc_value JS object.
 								// Check to see if our old_value is an array. This would be the case if the field is a multi-select.
-								if ( isNaN( old_value ) || old_value == '' ) {
+
+								if ( old_value == '' || typeof old_value === 'undefined' ) {
 									// We aren't dealing with an old_value array and old_value isn't a number. Set it to 0.
 									old_value = 0;
+								} else {
+									if ( isNaN( old_value ) ) {
+										if ( typeof ninja_forms_settings.currency_symbol !== 'undefined' ) {
+											old_value = old_value.replace( ninja_forms_settings.currency_symbol, "" );
+											old_value = old_value.replace( /,/g, "" );
+										}
+									}
 								}
 							}
 
@@ -314,6 +487,10 @@ jQuery(document).ready(function(jQuery) {
 							}
 
 							// Make sure that our current total is made up of numbers.
+							if ( typeof ninja_forms_settings.currency_symbol !== 'undefined' && typeof current_value != 'undefined' ) {
+								current_value = current_value.replace( ninja_forms_settings.currency_symbol, "" );
+								current_value = current_value.replace( /,/g, "" );
+							}
 							if ( !isNaN( current_value ) ) {
 								// Convert those string numbers into operable ones.
 								current_value = parseFloat( current_value );
@@ -345,8 +522,10 @@ jQuery(document).ready(function(jQuery) {
 							// If our old value exists and isn't empty or 0, then carry out the old_op on it.
 							if ( old_value && !isNaN( old_value ) && old_value != 0 && old_value != '' && !jQuery(this).hasClass('ninja-forms-field-calc-no-old-op') ) {
 								old_value = parseFloat( old_value );
+								var asdf = current_value;
 								tmp = new ninja_forms_var_operator(old_op);
 								current_value = tmp.evaluate( current_value, old_value );
+								//console.log( this.id + ' - ' + asdf + ' ' + old_op + ' ' + old_value + ' = ' + current_value );
 							}
 
 							// If our new value exists and isn't empty or 0, then carry out the new_op on it.
@@ -354,6 +533,7 @@ jQuery(document).ready(function(jQuery) {
 								new_value = parseFloat( new_value );
 								tmp = new ninja_forms_var_operator(new_op);
 								var calc_value = tmp.evaluate( current_value, new_value );
+								//console.log( this.id + ' - ' + current_value + ' ' + new_op + ' ' + new_value + ' = ' + calc_value );
 							} else {
 								// We don't have any calculations to do, so set calc_value to our current_value.
 								var calc_value = current_value;
@@ -366,6 +546,7 @@ jQuery(document).ready(function(jQuery) {
 
 								// Make sure that the changed field is in the formula and that we should change the current value.
 								var f_id = calc_settings.calc_fields[calc_id]['fields'][i];
+
 								var key = jQuery("#ninja_forms_field_" + f_id).val();
 								var f_value = '';
 								if ( jQuery('#ninja_forms_field_' + f_id + '_type' ).val() == 'list' ) {
@@ -398,22 +579,42 @@ jQuery(document).ready(function(jQuery) {
 										} else {
 											var key = 'unchecked';
 										}
+								} else if ( jQuery('#ninja_forms_field_' + f_id + '_type').val() == 'calc' ) {
+									if ( key == '' ) {
+										f_value = jQuery("#ninja_forms_field_" + f_id).prop('innerHTML');
+									}
 								}
-								
+
 								if ( f_value == '' ) {
 									if ( typeof calc_settings.calc_value[f_id] !== 'undefined' && typeof calc_settings.calc_value[f_id][key] !== 'undefined' ) {
-										f_value = calc_settings.calc_value[f_id][key]
+										f_value = calc_settings.calc_value[f_id][key];
+										//console.log( 'here: ' + f_value );
 									} else {
 										f_value = key;
-									}							
+									}
 								}
 
 								// Check for a percentage sign in our f_value. If we find one, then convert it to a decimal.
-								if ( f_value.indexOf("%") >= 0 ) {
-									f_value = f_value.replace( "%", "" );
-									if ( !isNaN( f_value ) ) {
-										f_value = parseFloat( f_value ) / 100;
+								if ( typeof f_value !== 'undefined' && typeof f_value === 'string' ) {
+									if ( f_value.indexOf("%") >= 0 ) {
+										f_value = f_value.replace( "%", "" );
+
+										if ( !isNaN( f_value ) ) {
+											f_value = parseFloat( f_value ) / 100;
+										}
+
 									}
+								}
+
+								// This field doesn't exist in the calc value object. It's either a textbox or similar element.
+								if ( typeof this.type === 'undefined' && key == '' ) {
+									f_value = this.innerHTML;
+									//console.log( 'undefined: ' + f_value );
+								}
+
+								if ( typeof ninja_forms_settings.currency_symbol !== 'undefined' && isNaN( f_value ) && typeof f_value != 'undefined' ) {
+									f_value = f_value.replace( ninja_forms_settings.currency_symbol, "" );
+									f_value = f_value.replace( /,/g, "" );
 								}
 
 								if ( isNaN( f_value ) || f_value == '' || !f_value || typeof f_value === 'undefined' ) {
@@ -424,6 +625,7 @@ jQuery(document).ready(function(jQuery) {
 								var re = new RegExp(find, 'g');
 								tmp_eq = tmp_eq.replace(re, f_value);
 							}
+
 							var calc_value = eval(tmp_eq);
 						}
 
@@ -436,6 +638,9 @@ jQuery(document).ready(function(jQuery) {
 						}
 
 						// Make sure that our current total is made up of numbers.
+						if ( typeof ninja_forms_settings.currency_symbol !== 'undefined' && typeof current_value != 'undefined' ) {
+							current_value = current_value.replace( ninja_forms_settings.currency_symbol, "" );
+						}
 						if ( !isNaN( current_value ) ) {
 							// Convert those string numbers into operable ones.
 							current_value = parseFloat( current_value );
@@ -445,15 +650,28 @@ jQuery(document).ready(function(jQuery) {
 						}
 
 						if ( current_value !== calc_value ) {
+
+							if ( jQuery('#ninja_forms_field_' + field_id + '_list_type').val() != 'checkbox' ) {
+								//console.log( 'set old value ' + field_id + ':' + key );
+								jQuery(this).data(calc_id + '-oldValue', key);
+							}
+
+							if ( jQuery('#ninja_forms_field_' + field_id + '_list_type').val() == 'checkbox' || jQuery('#ninja_forms_field_' + field_id + '_list_type').val() == 'radio' ) {
+								jQuery("#ninja_forms_field_" + field_id + "_div_wrap").find(".ninja-forms-field").each(function(){
+									jQuery(this).removeClass('ninja-forms-field-calc-no-old-op');
+								});
+							} else {
+								jQuery(this).removeClass('ninja-forms-field-calc-no-old-op');
+							}
+
 							calc_value = calc_value.toFixed(calc_places);
 							// Set the value of our calculation field.
-							jQuery("#ninja_forms_field_" + calc_id).data("oldValue", current_value);
 							if(jQuery("#ninja_forms_field_" + calc_id).attr("type") == 'text' ){
 								jQuery("#ninja_forms_field_" + calc_id).val(calc_value);
 							}else{
 								jQuery("#ninja_forms_field_" + calc_id).html(calc_value);
 							}
-							
+
 							//if( typeof calc_settings.calc_fields[field_id] === 'undefined' ) {
 								jQuery("#ninja_forms_field_" + calc_id).trigger('change');
 							//}
@@ -465,7 +683,11 @@ jQuery(document).ready(function(jQuery) {
 	});
 }); //End document.ready
 
-function ninja_forms_before_submit(formData, jqForm, options){
+function ninja_forms_before_submit( formData, jqForm, options ){
+	var form_id = jQuery( jqForm ).prop( 'id' ).replace( 'ninja_forms_form_', '' );
+	jQuery( '#nf_submit_' + form_id ).hide();
+	jQuery( '#nf_processing_' + form_id ).show();
+	jQuery( document ).data( 'submit_action', 'submit' );
 	var result = jQuery(jqForm).triggerHandler('beforeSubmit', [ formData, jqForm, options ]);
 	if ( result !== false ) {
 		result = jQuery('body').triggerHandler('beforeSubmit', [ formData, jqForm, options ]);
@@ -478,6 +700,10 @@ function ninja_forms_before_submit(formData, jqForm, options){
 
 function ninja_forms_response(responseText, statusText, xhr, jQueryform){
 	//alert(responseText);
+	var form_id = responseText.form_id;
+	jQuery( '#nf_processing_' + form_id ).hide();
+	jQuery( '#nf_submit_' + form_id ).show();
+
 	if( ninja_forms_settings.ajax_msg_format == 'inline' ){
 		var result = jQuery(jQueryform).triggerHandler('submitResponse', [ responseText ]);
 		if ( result !== false ) {
@@ -490,40 +716,30 @@ function ninja_forms_response(responseText, statusText, xhr, jQueryform){
 	}
 }
 
-function ninja_forms_register_response_function(form_id, name){
-	if( typeof window['ninja_forms_response_function_list'][form_id] == 'undefined' ){
-		window['ninja_forms_response_function_list'][form_id] = {};
-	}
-	window['ninja_forms_response_function_list'][form_id][name] = name;
-}
-
-function ninja_forms_register_before_submit_function(form_id, name){
-	if( typeof window['ninja_forms_before_submit_function_list'][form_id] == 'undefined' ){
-		window['ninja_forms_before_submit_function_list'][form_id] = {};
-	}
-	window['ninja_forms_before_submit_function_list'][form_id][name] = name;
-}
-
 function ninja_forms_default_before_submit(formData, jqForm, options){
 	var form_id = jQuery(jqForm).prop("id").replace("ninja_forms_form_", "" );
 
 	// Show the ajax spinner and processing message.
-	jQuery("#ninja_forms_form_" + form_id + "_process_msg").show();
+	//jQuery("#ninja_forms_form_" + form_id + "_process_msg").show();
 	jQuery("#ninja_forms_form_" + form_id + "_response_msg").prop("innerHTML", "");
 	jQuery("#ninja_forms_form_" + form_id + "_response_msg").removeClass("ninja-forms-error-msg");
 	jQuery("#ninja_forms_form_" + form_id + "_response_msg").removeClass("ninja-forms-success-msg");
 	jQuery(".ninja-forms-field-error").prop("innerHTML", "");
 	jQuery(".ninja-forms-error").removeClass("ninja-forms-error");
+
 	return true;
 }
 
 function ninja_forms_default_response(response){
 	var form_id = response.form_id;
 
-	jQuery("#ninja_forms_form_" + form_id + "_process_msg").hide();
+	ninja_forms_update_error_msgs(response);
+	ninja_forms_update_success_msg(response);
 
-	ninja_forms_update_error_msgs(response)
-	ninja_forms_update_success_msg(response)
+	if ( response.errors == false && typeof response.form_settings['landing_page'] != 'undefined' && response.form_settings['landing_page'] != '' ) {
+		window.location = response.form_settings['landing_page'];
+	}
+
 	return true;
 }
 
@@ -544,12 +760,22 @@ function ninja_forms_update_success_msg(response){
 			jQuery("#ninja_forms_form_" + form_id + "_response_msg").removeClass("ninja-forms-error-msg")
 			jQuery("#ninja_forms_form_" + form_id + "_response_msg").addClass("ninja-forms-success-msg")
 			jQuery("#ninja_forms_form_" + form_id + "_response_msg").prop("innerHTML", innerHTML);
+			jQuery("#ninja_forms_form_" + form_id + "_response_msg").show();
+
 		}
 		if(hide_complete == 1 ){
 			jQuery("#ninja_forms_form_" + form_id ).hide();
 		}
 		if(clear_complete == 1 ){
-			jQuery("#ninja_forms_form_" + form_id ).resetForm();
+			jQuery("#ninja_forms_form_" + form_id ).clearForm();
+			// Replace any inside labels.
+			jQuery( 'div.label-inside input.ninja-forms-field, div.label-inside textarea.ninja-forms-field' ).each( function() {
+				var label = jQuery("#" + this.id + "_label_hidden").val();
+				this.value = label;
+			});
+			if( 'rating' in jQuery("input[type=radio].ninja-forms-star") ) {
+				jQuery("input[type=radio].ninja-forms-star").rating("drain");
+			}
 		}
 	}
 }
@@ -558,7 +784,6 @@ function ninja_forms_update_error_msgs(response){
 	var innerHTML = '';
 	var form_id = response.form_id;
 	var errors = response.errors;
-	var form_id = response.form_id;
 	if(errors != false){
 		for( var propName in errors ){
 			if(errors[propName]['location'] == 'general' ){

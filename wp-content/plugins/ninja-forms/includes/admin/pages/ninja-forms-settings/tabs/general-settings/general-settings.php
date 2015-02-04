@@ -8,15 +8,20 @@ function ninja_forms_register_tab_general_settings(){
 		'display_function' => '',
 		'save_function' => 'ninja_forms_save_general_settings',
 	);
-	ninja_forms_register_tab('general_settings', $args);
+	ninja_forms_register_tab( 'general_settings', $args );
 }
 
 add_action('init', 'ninja_forms_register_general_settings_metabox');
 
 function ninja_forms_register_general_settings_metabox(){
 
-	$plugin_settings = get_option( 'ninja_forms_settings' );
-	$current_version = $plugin_settings['version'];
+	$plugin_settings = nf_get_settings();
+	if ( isset ( $plugin_settings['version'] ) ) {
+		$current_version = $plugin_settings['version'];
+	} else {
+		$current_version = NF_PLUGIN_VERSION;
+	}
+
 	$args = array(
 		'page' => 'ninja-forms-settings',
 		'tab' => 'general_settings',
@@ -43,18 +48,18 @@ function ninja_forms_register_general_settings_metabox(){
 			),
 		),
 	);
-	ninja_forms_register_tab_metabox($args);
+	ninja_forms_register_tab_metabox( $args );
 
 }
 
-function ninja_forms_save_general_settings($data){
-	$plugin_settings = get_option( 'ninja_forms_settings' );
+function ninja_forms_save_general_settings( $data ){
+	$plugin_settings = nf_get_settings();
 
-	foreach($data as $key => $val){
+	foreach( $data as $key => $val ){
 		$plugin_settings[$key] = $val;
 	}
 
-	update_option( 'ninja_forms_settings', $plugin_settings);
+	update_option( 'ninja_forms_settings', $plugin_settings );
 	$update_msg = __( 'Settings Saved', 'ninja-forms' );
 	return $update_msg;
 }
